@@ -1,5 +1,5 @@
 # ChannelX
-This project created for Software Engineering course of İstanbul Technical University. More details will be added.
+This project is created for the Software Engineering course of İstanbul Technical University. More details will be added.
 
 # Project Members
 
@@ -7,6 +7,7 @@ This project created for Software Engineering course of İstanbul Technical Univ
 
 * 150140119 Muhammed Kadir Yücel
 * 040140003 Burak Mert Gonultas
+* 150140021 Utku Öner
 
 # How to Test?
 
