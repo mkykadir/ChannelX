@@ -6,6 +6,7 @@ This project created for Software Engineering course of İstanbul Technical Univ
 (Please commit yourself into this file)
 
 * 150140119 Muhammed Kadir Yücel
+* 040140003 Burak Mert Gonultas
 
 # How to Test?
 
