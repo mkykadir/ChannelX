@@ -85,6 +85,10 @@ def panel():
     
     return render_template('panel.html')
 
+@app.route('/terms', methods=['GET'])
+def terms():
+    return render_template('terms.html')
+
 if __name__ == '__main__':
     port, debug = 5000, True
     app.run(host='0.0.0.0', port=port, debug=debug)
