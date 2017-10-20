@@ -3,7 +3,11 @@
 {% block content %}
 
 <!-- index body -->
-		
+		{% if message %}
+		<div class="alert alert-warning" role="alert">
+		  {{ message }}
+		</div>
+		{% endif %}
 		<!-- carousel -->
 		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 		  <ol class="carousel-indicators">
@@ -33,7 +37,7 @@
 		</div>
 		<!-- carousel end -->
 		
-		<div style="margin-left: 250px; margin-right: 250px; padding: 50px; background-color: #ffffff;background-clip:border-box;border:1px solid rgba(0,0,0,.125);border-radius:.25rem">
+		<div class="wborder indexpanel">
 			<ul class="list-unstyled">
 			  <li class="media">
 				<img class="d-flex mr-3" src="{{ url_for('static', filename='icon1.svg') }}" alt="Generic placeholder image" width="64px">

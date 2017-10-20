@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import IntegrityError
 import os
 
 app = Flask(__name__)
@@ -27,14 +28,19 @@ def login():
         username = request.form['inputUsername']
         password = request.form['inputPassword']
 
-        queryUser = User.query.filter_by(username=username).first()
-        newhash = queryUser.createHash(queryUser.salt, password)
-        if newhash == queryUser.hashed:
-            session['username'] = username
-            return redirect(url_for('panel'))
-        else:
+        if username is "" or password is "":
             return redirect(url_for('home'))
-        
+            
+        try:
+            queryUser = User.query.filter_by(username=username).first()
+            newhash = queryUser.createHash(queryUser.salt, password)
+            if newhash == queryUser.hashed:
+                session['username'] = username
+                return redirect(url_for('panel'))
+            else:
+                return redirect(url_for('home'))
+        except AttributeError:
+            return redirect(url_for('home'))
         
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -49,9 +55,16 @@ def signup():
         username = request.form['inputUsername']
         password = request.form['inputPassword']
 
-        user = User(username, email, phone, name, password)
-        db.session.add(user)
-        db.session.commit()
+        if name is "" or email is "" or phone is "" or username is "" or password is "":
+            return render_template('signup.html', message='All fields are required!')
+
+        try:
+            user = User(username, email, phone, name, password)
+            db.session.add(user)
+            db.session.commit()
+        except IntegrityError:
+            return render_template('signup.html', message='Already signed up!')
+            
         return redirect(url_for('home'))
 
     

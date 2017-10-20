@@ -3,9 +3,14 @@
 {% block content %}
 
 		<!-- signup body -->
-		<div style="display: block; width: 500px; margin-top: 5px; margin-bottom: 5px; margin-left: auto; margin-right: auto; padding: 50px; background-color: #ffffff;background-clip:border-box;border:1px solid rgba(0,0,0,.125);border-radius:.25rem">
+		<div class="signuppanel wborder">
 			<h1>Sign Up</h1>
 			<p>Some introductry small sentences</p>
+			{% if message %}
+			<div class="alert alert-warning" role="alert">
+			  {{ message }}
+			</div>
+			{% endif %}
 			<form role="form" action="{{ url_for('signup') }}" id="signupform", method="post">
 				<input type="text" name="inputName" class="form-control" placeholder="Name">
 				<br>
