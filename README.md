@@ -31,8 +31,8 @@ Before running project, this needs to be executed if models.py is changed, i.e. 
 * Open terminal or command prompt inside project folder
 * Open Python program by wiritng 'python'
 
-    >> from app import db
-    >> db.create_all()
+    from app import db
+    db.create_all()
     
 ## Windows Systems
 
