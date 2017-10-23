@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 import os
+import smtplib
 
 app = Flask(__name__)
 # app.config.from_object(os.environ['APP_SETTINGS'])
@@ -88,6 +89,38 @@ def panel():
 @app.route('/terms', methods=['GET'])
 def terms():
     return render_template('terms.html')
+
+# for email debug
+@app.route('/emaildebug', methods=['POST'])
+def emaildebug():
+    if 'username' not in session:
+        return redirect(url_for('home'))
+
+    # START: Email send
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.ehlo()
+    server.starttls()
+    server.login("untitledchannelx", "***") # ask for password
+
+    mailaddress = request.form['inputEmail']
+    if mailaddress == "":
+        return redirect(url_for('panel'))
+    
+    messageTo = "To: ".join(mailaddress)
+
+    msg = "\r\n".join([
+        "From: untitledchannelx@gmail.com",
+        messageTo,
+        "Subject: Test mail from ChannelX",
+        "",
+        "Welcome to ChannelX! We are Untitled Group team :)"
+        ])
+
+    server.sendmail("untitledchannelx@gmail.com", mailaddress, msg)
+    server.close()
+    # FINISH: Email send
+    
+    return redirect(url_for('panel'))
 
 if __name__ == '__main__':
     port, debug = 5000, True

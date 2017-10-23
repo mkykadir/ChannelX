@@ -7,5 +7,10 @@
 	<body>
 		<h1> Panel </h1>
 		<p><a href="/logout">Log out</a></p>
+		<form role="form" action="{{ url_for('emaildebug') }}" method="post">
+			<input name="inputEmail" type="email" placeholder="Enter email address" />
+			<br>
+			<button class="btn btn-primary btn-block" type="send">Send</button>
+		</form>
 	</body>
 </html>
