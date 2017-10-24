@@ -8,6 +8,7 @@ This project is created for the Software Engineering course of İstanbul Technic
 * 150140119 Muhammed Kadir Yücel
 * 040140003 Burak Mert Gonultas
 * 150140021 Utku Öner
+* 150140034 Kubilay Yazoğlu
 
 # How to Test?
 
