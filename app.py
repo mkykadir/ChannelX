@@ -4,6 +4,8 @@ from sqlalchemy.exc import IntegrityError
 from forms import SignUpForm
 import os
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 app = Flask(__name__)
 # app.config.from_object(os.environ['APP_SETTINGS'])
@@ -31,19 +33,46 @@ def login():
         password = request.form['inputPassword']
 
         if username is "" or password is "":
+            flash("Please will credentials", "warning")
             return redirect(url_for('home'))
             
         try:
             queryUser = User.query.filter_by(username=username).first()
             newhash = queryUser.createHash(queryUser.salt, password)
-            if newhash == queryUser.hashed:
+            if newhash == queryUser.hashed and queryUser.email_verified is True:
                 session['username'] = username
                 return redirect(url_for('panel'))
             else:
+                flash("Wrong credentials or un-verified E-Mail", "danger")
                 return redirect(url_for('home'))
         except AttributeError:
             return redirect(url_for('home'))
         
+
+@app.route('/verify', methods=['GET'])
+def verify():
+    if 'username' in session:
+        return redirect(url_for('panel'))
+
+    username = request.args.get('username')
+    if not username:
+        return redirect(url_for('home'))
+    
+    user = User.query.filter_by(username=username).first()
+
+    if user:
+        if user.email_verified is False:
+            user.email_verified = True
+            db.session.commit()
+            flash("Your E-Mail verified, you can log-in now!", "success")
+        else:
+            flash("Your E-Mail is already verified, you can log in!", "info")
+    else:
+        flash("Non-registered user!", "danger")
+
+    return redirect(url_for('home'))
+    
+    
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -59,6 +88,33 @@ def signup():
 
             db.session.add(user)
             db.session.commit()
+
+            mailaddress = form.email.data
+            
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.ehlo()
+            server.starttls()
+            server.login("untitledchannelx", "Itu1773ce") # ask for password
+            
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = "ChannelX: Account Verification"
+            msg['From'] = "untitledchannelx@gmail.com"
+            msg['To'] = mailaddress
+            html = """\
+                <html>
+                  <head></head>
+                  <body>
+                    <h1>ChannelX</h1>
+                    <p>Welcome our family! Please <a href="http://localhost:5000/verify?username=""" + form.username.data + """\
+                      ">verify</a> your account.
+                    </p>
+                  </body>
+                </html>
+                """
+            msg.attach(MIMEText(html, 'html'))
+            
+            server.sendmail("untitledchannelx@gmail.com", mailaddress, msg.as_string())
+            server.close()
         except IntegrityError:
             flash('Already signed up user!', 'warning')
             return render_template('signup.html', form=form)

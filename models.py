@@ -11,6 +11,7 @@ class User(db.Model):
     name = db.Column(db.String(120), nullable=False)
     hashed = db.Column(db.Text, nullable=False)
     salt = db.Column(db.Text, nullable=False)
+    email_verified = db.Column(db.Boolean, nullable=False, default=False)
 
     def __init__(self, username, email, phone, name, password):
         self.username = username
