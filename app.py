@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
+from forms import SignUpForm
 import os
 import smtplib
 
@@ -48,28 +49,25 @@ def login():
 def signup():
     if 'username' in session:
         return redirect(url_for('panel'))
+
+    form = SignUpForm(request.form)
     
-    if request.method == 'POST':
-        name = request.form['inputName']
-        email = request.form['inputEmail']
-        phone = request.form['inputPhone']
-        username = request.form['inputUsername']
-        password = request.form['inputPassword']
-
-        if name is "" or email is "" or phone is "" or username is "" or password is "":
-            return render_template('signup.html', message='All fields are required!')
-
+    if request.method == 'POST' and form.validate():
         try:
-            user = User(username, email, phone, name, password)
+            user = User(form.username.data, form.email.data, form.phone.data,
+                        form.name.data, form.password.data)
+
             db.session.add(user)
             db.session.commit()
         except IntegrityError:
-            return render_template('signup.html', message='Already signed up!')
-            
+            flash('Already signed up user!', 'warning')
+            return render_template('signup.html', form=form)
+
+        flash("Thanks for registering, we've sent email for validation", 'info')
         return redirect(url_for('home'))
 
     
-    return render_template('signup.html')
+    return render_template('signup.html', form=form)
 
 @app.route('/logout', methods=['GET'])
 def logout():

@@ -6,6 +6,18 @@
 		<div class="signuppanel wborder">
 			<h1>Sign Up</h1>
 			<p>Some introductry small sentences</p>
+			{% with messages = get_flashed_messages(with_categories=true) %}
+			  {% if messages %}
+				{% for category, message in messages %}
+				  	<div class="alert alert-{{ category }}" role="alert">
+						{{ message }}
+					</div>
+				{% endfor %}
+				</ul>
+			  {% endif %}
+			{% endwith %}
+			
+			<!--
 			{% if message %}
 			<div class="alert alert-warning" role="alert">
 			  {{ message }}
@@ -24,6 +36,26 @@
 				<br>
 				<button type="submit" class="btn btn-primary btn-block">Sign Up</button>
 			</form>
+			-->
+			
+			{% from "_formhelpers.html" import render_field %}
+			<form role="form" action="{{ url_for('signup') }}" method=post>
+				{{ render_field(form.username) }}
+				
+				{{ render_field(form.name) }}
+				
+				{{ render_field(form.email) }}
+				
+				{{ render_field(form.phone) }}
+				
+				{{ render_field(form.password) }}
+				
+				{{ render_field(form.confirm) }}
+				
+				{{ render_field(form.accept_terms) }}
+			  <p><input type="submit" class="btn btn-primary btn-block" value="Sign Up">
+			</form>
+			
 			<div style="text-align: center">
 				<a class="nav-link active" href="{{ url_for('terms') }}">Terms</a>
 			</div>

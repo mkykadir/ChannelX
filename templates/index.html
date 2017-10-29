@@ -3,11 +3,16 @@
 {% block content %}
 
 <!-- index body -->
-		{% if message %}
-		<div class="alert alert-warning" role="alert">
-		  {{ message }}
-		</div>
-		{% endif %}
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		  {% if messages %}
+			{% for category, message in messages %}
+				<div class="alert alert-{{ category }}" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			</ul>
+		  {% endif %}
+		{% endwith %}
 		<!-- carousel -->
 		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 		  <ol class="carousel-indicators">
