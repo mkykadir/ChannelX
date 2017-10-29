@@ -94,7 +94,7 @@ def signup():
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.ehlo()
             server.starttls()
-            server.login("untitledchannelx", "Itu1773ce") # ask for password
+            server.login("untitledchannelx", "***") # ask for password
             
             msg = MIMEMultipart('alternative')
             msg['Subject'] = "ChannelX: Account Verification"
