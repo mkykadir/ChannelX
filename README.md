@@ -17,8 +17,10 @@ Make sure you have installed
 * [PostgreSQL 10](https://www.postgresql.org)
 * [Python 3.x](https://www.python.org/)
 * [Flask](http://flask.pocoo.org/) - pip install Flask
-* [Flask-SQLAlchemy](http://flask-sqlalchemy.pocoo.org) - pip install Flask-SQLAlchemy
-* [Psycopg2](http://initd.org/psycopg/) - pip install psycopg2
+
+You can install required additions from "requirements.txt" by executing following command:
+
+    pip install -r requirements.txt
 
 Make sure you have follow requirements before running for debug purposes
 
