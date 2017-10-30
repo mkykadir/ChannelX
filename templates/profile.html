@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Profile</title>
+	<head>
+	
+	<body>
+		{% if user %}
+			<h1>{{ user.name }}</h1>
+			<p>{{ user.email }}</p>
+			<p>{{ user.username }}</p>
+			<p>{{ user.phone }}</p>
+		{% endif %}
+		<p><a href="{{ url_for('panel') }}">Panel</a></p>
+	</body>
+</html>

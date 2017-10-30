@@ -30,19 +30,20 @@ def unauthorized():
 
 @app.route('/', methods=['GET'])
 def home():
-    if 'username' in session:
+    if current_user.is_authenticated:
         return redirect(url_for('panel'))
     
     return render_template('index.html')
 
 @app.route('/login', methods=['POST'])
 def login():
-    if 'username' in session:
+    if current_user.is_authenticated:
         return redirect(url_for('panel'))
     
     if request.method == 'POST':
         username = request.form['inputUsername']
         password = request.form['inputPassword']
+        rememberme = request.form.get('rememberMe')
 
         if username is "" or password is "":
             flash("Please will credentials", "warning")
@@ -52,7 +53,7 @@ def login():
             queryUser = User.query.filter_by(username=username).first()
             newhash = queryUser.createHash(queryUser.salt, password)
             if newhash == queryUser.hashed and queryUser.email_verified is True:
-                login_user(queryUser)
+                login_user(queryUser, remember=rememberme)
                 return redirect(url_for('panel'))
             else:
                 flash("Wrong credentials or non-verified E-Mail address", "danger")
@@ -140,19 +141,28 @@ def signup():
 
 @app.route('/logout', methods=['GET'])
 @login_required
-def logout():
-    # if 'username' not in session:
-    #    return redirect(url_for('home'))
-
-    # session.pop('username', Non        
-    
+def logout():   
     logout_user()
     return redirect(url_for('home'))
 
 @app.route('/panel', methods=['GET'])
 @login_required
 def panel():        
-    return render_template('panel.html')
+    return render_template('panel.html', username=current_user.get_id())
+
+@app.route('/<username>', methods=['GET', 'POST'])
+@login_required
+def profile(username):
+
+    if current_user.get_id() != username:
+        return redirect(url_for('profile', username=current_user.get_id()))
+
+    user = User.query.filter_by(username=username).first()
+
+    if request.method == 'GET':
+        return render_template('profile.html', user=user)
+        
+    
 
 @app.route('/terms', methods=['GET'])
 def terms():

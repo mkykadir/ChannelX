@@ -6,7 +6,8 @@
 	
 	<body>
 		<h1> Panel </h1>
-		<p><a href="/logout">Log out</a></p>
+		<p><a href="{{ url_for('profile', username=current_user.get_id()) }}">Profile</a></p>
+		<p><a href="{{ url_for('logout') }}">Log out</a></p>
 		<form role="form" action="{{ url_for('emaildebug') }}" method="post">
 			<input name="inputEmail" type="email" placeholder="Enter email address" />
 			<br>
