@@ -34,4 +34,23 @@ class User(db.Model):
         salted_password = password.join(salt)
         h = hashlib.md5(salted_password.encode())
         return h.hexdigest()
+
+    def is_authenticated(self):
+        return True
+
+    
+    def is_active(self):
+        if self.email_verified:
+            print("True")
+        else:
+            print("False")
+            
+        return self.email_verified
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.username
+        
     

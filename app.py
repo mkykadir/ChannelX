@@ -6,6 +6,7 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 
 app = Flask(__name__)
 # app.config.from_object(os.environ['APP_SETTINGS'])
@@ -13,8 +14,19 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1234@localhost/channelx"
 app.secret_key = 'UntitledGroup'
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 from models import User
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.filter_by(username=user_id).first()
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash("You should be logged in!", "warning")
+    return redirect(url_for('home'))
 
 @app.route('/', methods=['GET'])
 def home():
@@ -40,10 +52,10 @@ def login():
             queryUser = User.query.filter_by(username=username).first()
             newhash = queryUser.createHash(queryUser.salt, password)
             if newhash == queryUser.hashed and queryUser.email_verified is True:
-                session['username'] = username
+                login_user(queryUser)
                 return redirect(url_for('panel'))
             else:
-                flash("Wrong credentials or un-verified E-Mail", "danger")
+                flash("Wrong credentials or non-verified E-Mail address", "danger")
                 return redirect(url_for('home'))
         except AttributeError:
             return redirect(url_for('home'))
@@ -125,19 +137,21 @@ def signup():
     
     return render_template('signup.html', form=form)
 
-@app.route('/logout', methods=['GET'])
-def logout():
-    if 'username' not in session:
-        return redirect(url_for('home'))
 
-    session.pop('username', None)
+@app.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    # if 'username' not in session:
+    #    return redirect(url_for('home'))
+
+    # session.pop('username', Non        
+    
+    logout_user()
     return redirect(url_for('home'))
 
 @app.route('/panel', methods=['GET'])
-def panel():
-    if 'username' not in session:
-        return redirect(url_for('home'))
-    
+@login_required
+def panel():        
     return render_template('panel.html')
 
 @app.route('/terms', methods=['GET'])
