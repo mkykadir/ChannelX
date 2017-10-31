@@ -150,14 +150,13 @@ def logout():
 def panel():        
     return render_template('panel.html', username=current_user.get_id())
 
-@app.route('/<username>', methods=['GET', 'POST'])
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
-def profile(username):
+def profile():
 
-    if current_user.get_id() != username:
-        return redirect(url_for('profile', username=current_user.get_id()))
-
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(username=current_user.get_id()).first()
+    if not user:
+        return redirect(url_for('home'))
 
     if request.method == 'GET':
         return render_template('profile.html', user=user)
