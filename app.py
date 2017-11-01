@@ -11,7 +11,8 @@ from flask_login import LoginManager, login_required, login_user, logout_user, c
 app = Flask(__name__)
 # app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1234@localhost/channelx"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['CHANNELX_SQL_SERVER']
+mailpassword = os.environ['CHANNELX_MAIL_PASS'] # ask for password
 app.secret_key = 'UntitledGroup'
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -107,7 +108,7 @@ def signup():
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.ehlo()
             server.starttls()
-            server.login("untitledchannelx", "***") # ask for password
+            server.login("untitledchannelx", mailpassword)
             
             msg = MIMEMultipart('alternative')
             msg['Subject'] = "ChannelX: Account Verification"
@@ -177,7 +178,7 @@ def emaildebug():
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
     server.starttls()
-    server.login("untitledchannelx", "***") # ask for password
+    server.login("untitledchannelx", mailpassword) # ask for password
 
     mailaddress = request.form['inputEmail']
     if mailaddress == "":

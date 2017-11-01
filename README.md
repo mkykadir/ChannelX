@@ -24,10 +24,18 @@ You can install required additions from "requirements.txt" by executing followin
 
 Make sure you have follow requirements before running for debug purposes
 
-* PostgreSQL server port is 5432 (Default)
-* PostgreSQL admin username is **postgres**
 * PostgreSQL **channelx** named database created
-* PostgreSQL admin password is **1234**
+
+Make sure you have added required environmental variables to your system for local debug:
+
+* Variable required for mail sending;
+
+    Name: CHANNELX_MAIL_PASS
+	Variable: ask for mail password
+
+* Variable required for SQL server:
+    Name: CHANNELX_SQL_SERVER
+	Variable: postgresql://adminusername:adminpassword@localhost/channelx
 
 Before running project, this needs to be executed if models.py is changed, i.e. new tables added
 
