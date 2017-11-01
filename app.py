@@ -17,6 +17,7 @@ app.secret_key = 'UntitledGroup'
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
+db.create_all() # create new models automatically
 
 from models import User
 
