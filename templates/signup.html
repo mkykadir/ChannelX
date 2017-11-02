@@ -1,64 +1,57 @@
-{% extends "layout.html" %}
-{% block title %}Sign Up{% endblock%}
-{% block content %}
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://getbootstrap.com/docs/4.0/examples/signin/ -->
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-		<!-- signup body -->
-		<div class="signuppanel wborder">
-			<h1>Sign Up</h1>
-			<p>Some introductry small sentences</p>
-			{% with messages = get_flashed_messages(with_categories=true) %}
-			  {% if messages %}
-				{% for category, message in messages %}
-				  	<div class="alert alert-{{ category }}" role="alert">
-						{{ message }}
-					</div>
-				{% endfor %}
-				</ul>
-			  {% endif %}
-			{% endwith %}
-			
-			<!--
-			{% if message %}
-			<div class="alert alert-warning" role="alert">
-			  {{ message }}
-			</div>
-			{% endif %}
-			<form role="form" action="{{ url_for('signup') }}" id="signupform" method="post">
-				<input type="text" name="inputName" class="form-control" placeholder="Name">
-				<br>
-				<input type="email" name="inputEmail" class="form-control" placeholder="E-Mail">
-				<br>
-				<input type="tel" name="inputPhone" class="form-control" placeholder="Phone">
-				<br>
-				<input type="text" name="inputUsername" class="form-control" placeholder="Username">
-				<br>
-				<input type="password" name="inputPassword" class="form-control" placeholder="Password">
-				<br>
-				<button type="submit" class="btn btn-primary btn-block">Sign Up</button>
-			</form>
-			-->
-			
-			{% from "_formhelpers.html" import render_field %}
-			<form role="form" action="{{ url_for('signup') }}" method=post>
-				{{ render_field(form.username) }}
-				
-				{{ render_field(form.name) }}
-				
-				{{ render_field(form.email) }}
-				
-				{{ render_field(form.phone) }}
-				
-				{{ render_field(form.password) }}
-				
-				{{ render_field(form.confirm) }}
-				
-				{{ render_field(form.accept_terms) }}
-			  <p><input type="submit" class="btn btn-primary btn-block" value="Sign Up">
-			</form>
-			
-			<div style="text-align: center">
-				<a class="nav-link active" href="{{ url_for('terms') }}">Terms</a>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>Sign Up | ChannelX</title>
+
+		<!-- Bootstrap core CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+
+		<!-- Custom styles for this template -->
+		
+	</head>
+
+  <body>
+	<div class="container py-3">
+		<div class="row">
+			<div class="mx-auto col-lg">
+						<!-- form user info -->
+						<div class="card">
+							<div class="card-header">
+								<h4 class="mb-0">Sign up to ChannelX</h4>
+							</div>
+							<div class="card-body">
+								{% from "_formhelpers.html" import render_field %}
+								<form role="form" class="form" action="{{ url_for('signup') }}" method="post">							
+									{{ render_field(form.username) }}
+									
+									{{ render_field(form.name) }}
+									
+									{{ render_field(form.email) }}
+									
+									{{ render_field(form.phone) }}
+									
+									{{ render_field(form.password) }}
+									
+									{{ render_field(form.confirm) }}
+									
+									{{ render_field(form.accept_terms) }}
+									
+								<div class="form-group row" style="text-align: center">
+									<input type="submit" class="btn btn-primary btn-block" value="Sign Up">
+								</div>
+								</form>
+								<div class="form-group row" style="text-align: center">
+									<a class="nav-link active" href="{{ url_for('terms') }}">Terms</a>
+								</div>
+							</div>
+						</div>
+						<!-- /form user info -->
 			</div>
 		</div>
+	</div>
 
-{% endblock %}
+</body></html>

@@ -1,16 +1,78 @@
 <!DOCTYPE html>
-<html>
+<!-- saved from url=(0050)https://getbootstrap.com/docs/4.0/examples/signin/ -->
+<html lang="en">
 	<head>
-		<title>Profile</title>
-	<head>
-	
-	<body>
-		{% if user %}
-			<h1>{{ user.name }}</h1>
-			<p>{{ user.email }}</p>
-			<p>{{ user.username }}</p>
-			<p>{{ user.phone }}</p>
-		{% endif %}
-		<p><a href="{{ url_for('panel') }}">Panel</a></p>
-	</body>
-</html>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>Profile | ChannelX</title>
+
+		<!-- Bootstrap core CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+
+		<!-- Custom styles for this template -->
+		
+	</head>
+
+  <body>
+	<div class="container py-3">
+		<div class="row">
+			<div class="mx-auto col-lg">
+						<!-- form user info -->
+						<div class="card">
+							<div class="card-header">
+								<h4 class="mb-0">User Information</h4>
+							</div>
+							<div class="card-body">
+								<form class="form" name="loginform" method="post" action="{{ url_for('login') }}">
+									<div class="form-group row">
+										<label class="col-lg-3 col-form-label form-control-label">Username</label>
+										<div class="col-lg-9">
+											<input name="inputUsername" type="text" class="form-control" placeholder="Enter username" autofocus="" value="{{ user.username }}"/>
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-lg-3 col-form-label form-control-label">Name</label>
+										<div class="col-lg-9">
+											<input name="inputName" type="text" class="form-control" placeholder="Enter name" value="{{ user.name }}"/>
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-lg-3 col-form-label form-control-label">Email Address</label>
+										<div class="col-lg-9">
+											<input class="form-control" name="inputEmail" type="email" value="{{ user.email }}"/>
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-lg-3 col-form-label form-control-label">Phone Number</label>
+										<div class="col-lg-9">
+											<input class="form-control" name="inputPhone" type="tel" placeholder="Enter phone number" value="{{ user.phone }}" />
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-lg-3 col-form-label form-control-label">Password</label>
+										<div class="col-lg-9">
+											<input class="form-control" name="inputPassword" type="password" placeholder="Enter password" />
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-lg-3 col-form-label form-control-label">Confirm</label>
+										<div class="col-lg-9">
+											<input class="form-control" name="inputConfirm" type="password" placeholder="Confirm your password" />
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="col-lg-9">
+											<button class="btn btn-success" type="submit">Save</button>
+											<a href="{{ url_for('panel') }}" class="btn btn-primary">Panel</a>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<!-- /form user info -->
+			</div>
+		</div>
+	</div> 
+
+</body></html>

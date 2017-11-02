@@ -37,11 +37,14 @@ def home():
     
     return render_template('index.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('panel'))
-    
+
+    if request.method == 'GET':
+        return render_template('login.html')
+
     if request.method == 'POST':
         username = request.form['inputUsername']
         password = request.form['inputPassword']
