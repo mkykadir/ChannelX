@@ -60,8 +60,8 @@ class Message(db.Model):
     messageItself = db.Column(db.String(500), nullable=False)
     fromWho = db.Column(db.String(100), unique=True, nullable=False)
     toWho = db.Column(db.String(30), unique=True, nullable=False)
-    messageDate = db.Column(db.Datetime, nullable=False)
-    sent = db.Column(db.Bool, nullable=False)
+    messageDate = db.Column(db.DateTime, nullable=False)
+    sent = db.Column(db.Boolean, nullable=False)
 
     def __init__(self, messageID, fromWho, toWho, messageDate, sent):
         self.messageID = messageID
@@ -70,12 +70,10 @@ class Message(db.Model):
         self.messageDate = messageDate
         self.sent = self.sent
 
-    def get_message(self)
+    def get_message(self):
         return self.messageItself
 
-    def is_user(self.fromWho):
-        return True
-
+   
     
         
 
