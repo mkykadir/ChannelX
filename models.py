@@ -1,7 +1,6 @@
 from app import db
 import hashlib
 import random
-import datetime
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -53,20 +52,39 @@ class User(db.Model):
 
     def get_id(self):
         return self.username
+
+class Message(db.Model):
+    __tablename__ = 'messages'
+
+    messageID = db.Column(db.String(10), primary_key=True)
+    messageItself = db.Column(db.String(500), nullable=False)
+    fromWho = db.Column(db.String(100), unique=True, nullable=False)
+    toWho = db.Column(db.String(30), unique=True, nullable=False)
+    messageDate = db.Column(db.Datetime, nullable=False)
+    sent = db.Column(db.Bool, nullable=False)
+
+    def __init__(self, messageID, fromWho, toWho, messageDate, sent):
+        self.messageID = messageID
+        self.fromWho = fromWho
+        self.toWho = toWho
+        self.messageDate = messageDate
+        self.sent = self.sent
+
+    def get_message(self)
+        return self.messageItself
+
+    def is_user(self.fromWho):
+        return True
+
+    
         
-    '''
-class Channels(db.Model):    
-    __tablename__ = 'channels'
 
-    name = db.Column(db.String(100), nullable = False, primary_key=True)
-    creator = db.Column(db.String(100), nullable = False, db.ForeignKey('users.username') )
-    description = db.Column(db.String(200),nullable = False)
-    start = db.Column(db.DateTime, nullable = True)
-    end = db.Column(db.DateTime, nullable = True)
-    creation_date = db.Column(db.DateTime, nullable = False)
-    member_limit = db.Column(db.Integer, nullable = True)
-    password = db.Column(db.Text, nullable = True)
+    
 
-    def __init__(self, name, creator, description, start, end, member_limit):
-        self.name = name
-     #   self.creator = 
+
+    
+    
+    
+    
+        
+    
