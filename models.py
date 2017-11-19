@@ -96,7 +96,25 @@ class Channel(db.Model):
         self.member_limit = member_limit
 
         self.creation_date = datetime.datetime.now()
-           
+
+
+
+class Member(db.Model):
+    __tablename__ = 'members'
+
+    channelName = db.Column(db.String(30), primary_key=True)
+    memberName = db.Column(db.String(100), primary_key=True)
+    entryDate = db.Column(db.DateTime, nullable=False)
+    prefersEmail = db.Column(db.Boolean, nullable=False)
+    prefersPhone = db.Column(db.Boolean, nullable=False)
+    
+
+    def __init__(self, channelName, memberName, entryDate, prefersEmail, prefersPhone):
+        self.channelName = channelName
+        self.memberName = memberName
+        self.entryDate = entryDate
+        self.prefersEmail = prefersEmail
+        self.prefersPhone = self.prefersPhone
     
         
 
