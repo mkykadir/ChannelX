@@ -30,7 +30,7 @@ def load_user(user_id):
 @login_manager.unauthorized_handler
 def unauthorized():
     flash("You should be logged in!", "warning")
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 @app.route('/', methods=['GET'])
 def home():
@@ -53,8 +53,8 @@ def login():
         rememberme = request.form.get('rememberMe')
 
         if username is "" or password is "":
-            flash("Please will credentials", "warning")
-            return redirect(url_for('home'))
+            flash("Please fill credentials", "warning")
+            return redirect(url_for('login'))
             
         try:
             queryUser = User.query.filter_by(username=username).first()
@@ -64,9 +64,9 @@ def login():
                 return redirect(url_for('panel'))
             else:
                 flash("Wrong credentials or non-verified E-Mail address", "danger")
-                return redirect(url_for('home'))
+                return redirect(url_for('login'))
         except AttributeError:
-            return redirect(url_for('home'))
+            return redirect(url_for('login'))
         
 
 @app.route('/verify', methods=['GET'])
@@ -140,7 +140,7 @@ def signup():
             return render_template('signup.html', form=form)
 
         flash("Thanks for registering, we've sent email for validation", 'info')
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
 
     
     return render_template('signup.html', form=form)
@@ -166,6 +166,10 @@ def create_channel():
     content = request.form['inputDescription']
     creator = current_user.get_id()
     # ismin olup olmadigini kontrol et!
+    while db.session.query(Channel.name).filter(Channel.name==generated_name).count() is not 0:
+        word_count = randint(1,4)
+        generated_name = petname.Generate(int(word_count))
+    
     channel = Channel(generated_name, creator, content)
     db.session.add(channel)
     db.session.commit()

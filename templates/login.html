@@ -24,6 +24,17 @@
 								<h4 class="mb-0">Sign in to ChannelX</h4>
 							</div>
 							<div class="card-body">
+								{% with messages = get_flashed_messages(with_categories=true) %}
+								{% if messages %}
+								{% for category, message in messages %}
+									<div class="alert alert-{{ category }}">
+									  <span class="closebtn" style="cursor: pointer;" onclick="this.parentElement.style.display='none';">&times;</span> 
+									  {{ message }}
+									</div>								
+								{% endfor %}								
+								{% endif %}
+								{% endwith %}
+								
 								<form class="form" name="loginform" method="post" action="{{ url_for('login') }}">
 									<div class="form-group row">
 										<label class="col-lg-3 col-form-label form-control-label">Username</label>
