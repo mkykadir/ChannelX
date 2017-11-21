@@ -7,7 +7,9 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
-
+import argparse
+import petname
+from random import randint
 app = Flask(__name__)
 # app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -19,7 +21,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 db.create_all() # create new models automatically
 
-from models import User
+from models import User, Channel
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -152,8 +154,23 @@ def logout():
 
 @app.route('/panel', methods=['GET'])
 @login_required
-def panel():        
-    return render_template('panel.html', username=current_user.get_id())
+def panel():
+    channels = db.session.query(Channel.name).order_by(Channel.creation_date).filter(Channel.creator==current_user.get_id())
+    return render_template('panel.html', username=current_user.get_id(), channels=channels)
+
+@app.route('/channelc', methods=['POST'])
+@login_required
+def create_channel():
+    word_count = randint(1,4)
+    generated_name = petname.Generate(int(word_count))
+    content = request.form['inputDescription']
+    creator = current_user.get_id()
+    # ismin olup olmadigini kontrol et!
+    channel = Channel(generated_name, creator, content)
+    db.session.add(channel)
+    db.session.commit()
+    return redirect(url_for('home'))
+        
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required

@@ -55,6 +55,42 @@ class User(db.Model):
     def get_id(self):
         return self.username
 
+class Channel(db.Model):    
+    __tablename__ = 'channels'
+    # TODO: Add setter and getter to other columns
+    name = db.Column(db.Text, nullable = False, primary_key=True)
+    creator = db.Column(db.String(100), db.ForeignKey('users.username'), nullable = False)
+    description = db.Column(db.String(200),nullable = False)
+    start = db.Column(db.DateTime, nullable = True)
+    end = db.Column(db.DateTime, nullable = True)
+    creation_date = db.Column(db.DateTime, nullable = False)
+    member_limit = db.Column(db.Integer, nullable = True)
+    hashed = db.Column(db.Text, nullable=True)
+    salt = db.Column(db.Text, nullable=True)
+    # password = db.Column(db.Text, nullable = True)
+
+    def __init__(self, name, creator, description):
+        self.name = name
+        self.creator = creator
+        self.description = description
+        self.creation_date = datetime.datetime.now()
+        
+
+    def createSalt(self):
+        ABECE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        chars = []
+        for i in range(16):
+            chars.append(random.choice(ABECE))
+        
+        real_salt = "".join(chars)
+        return real_salt
+
+    def createHash(self, salt, password):
+        salted_password = password.join(salt)
+        h = hashlib.md5(salted_password.encode())
+        return h.hexdigest()
+
+
 class Message(db.Model):
     __tablename__ = 'messages'
 
@@ -74,30 +110,6 @@ class Message(db.Model):
 
     def get_message(self):
         return self.messageItself
-
-class Channel(db.Model):    
-    __tablename__ = 'channels'
-
-    name = db.Column(db.String(100), nullable = False, primary_key=True)
-    creator = db.Column(db.String(100), db.ForeignKey('users.username'), nullable = False)
-    description = db.Column(db.String(200),nullable = False)
-    start = db.Column(db.DateTime, nullable = True)
-    end = db.Column(db.DateTime, nullable = True)
-    creation_date = db.Column(db.DateTime, nullable = False)
-    member_limit = db.Column(db.Integer, nullable = True)
-    password = db.Column(db.Text, nullable = True)
-
-    def __init__(self, name, creator, description, start, end, member_limit):
-        self.name = name
-        self.creator = creator
-        self.description = description
-        self.start = start
-        self.end = end
-        self.member_limit = member_limit
-
-        self.creation_date = datetime.datetime.now()
-
-
 
 class Member(db.Model):
     __tablename__ = 'members'
