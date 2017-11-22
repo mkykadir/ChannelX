@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from forms import SignUpForm
 import os
@@ -30,7 +31,7 @@ def load_user(user_id):
 @login_manager.unauthorized_handler
 def unauthorized():
     flash("You should be logged in!", "warning")
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 @app.route('/', methods=['GET'])
 def home():
@@ -53,8 +54,8 @@ def login():
         rememberme = request.form.get('rememberMe')
 
         if username is "" or password is "":
-            flash("Please will credentials", "warning")
-            return redirect(url_for('home'))
+            flash("Please fill credentials", "warning")
+            return redirect(url_for('login'))
             
         try:
             queryUser = User.query.filter_by(username=username).first()
@@ -64,9 +65,9 @@ def login():
                 return redirect(url_for('panel'))
             else:
                 flash("Wrong credentials or non-verified E-Mail address", "danger")
-                return redirect(url_for('home'))
+                return redirect(url_for('login'))
         except AttributeError:
-            return redirect(url_for('home'))
+            return redirect(url_for('login'))
         
 
 @app.route('/verify', methods=['GET'])
@@ -140,7 +141,7 @@ def signup():
             return render_template('signup.html', form=form)
 
         flash("Thanks for registering, we've sent email for validation", 'info')
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
 
     
     return render_template('signup.html', form=form)
@@ -158,18 +159,96 @@ def panel():
     channels = db.session.query(Channel.name).order_by(Channel.creation_date).filter(Channel.creator==current_user.get_id())
     return render_template('panel.html', username=current_user.get_id(), channels=channels)
 
+@app.route('/_channeli', methods=['GET'])
+@login_required
+def channel_info_json():
+    channel_name = request.args.get('chname')
+    queryChannel = Channel.query.filter_by(name=channel_name).first()
+
+    if queryChannel:
+        protected = False
+        if queryChannel.hashed is not None:
+            protected = True
+
+        startdate = None
+        if queryChannel.start is not None:
+            startdate = queryChannel.start.strftime('%Y-%m-%d')
+
+        enddate = None
+        if queryChannel.end is not None:
+            enddate = queryChannel.end.strftime('%Y-%m-%d')
+            
+        result = {'chname': queryChannel.name, 'chcreatedate': queryChannel.creation_date.strftime('%Y-%m-%d'),'chdescription': queryChannel.description, 'chstart': startdate, 'chend': enddate, 'chlimit': queryChannel.member_limit, 'chprotected': protected}
+        print(result)
+        return jsonify(result)
+    else:
+        return redirect(url_for('panel'))
+
+@app.route('/_channeld', methods=['GET'])
+@login_required
+def channel_remove_json():
+    channel_name = request.args.get('chname')
+    try:
+        Channel.query.filter_by(name=channel_name, creator=current_user.get_id()).delete()
+        db.session.commit()
+        result = {'result': 200}
+    except:
+        result = {'result': 404}
+
+    return jsonify(result)
+
 @app.route('/channelc', methods=['POST'])
 @login_required
 def create_channel():
     word_count = randint(1,4)
     generated_name = petname.Generate(int(word_count))
-    content = request.form['inputDescription']
+    content = request.form['inputCreateDescription']
     creator = current_user.get_id()
     # ismin olup olmadigini kontrol et!
+    while db.session.query(Channel.name).filter(Channel.name==generated_name).count() is not 0:
+        word_count = randint(1,4)
+        generated_name = petname.Generate(int(word_count))
+    
     channel = Channel(generated_name, creator, content)
     db.session.add(channel)
     db.session.commit()
     return redirect(url_for('home'))
+
+@app.route('/channelu', methods=['POST'])
+@login_required
+def update_channel():
+    chname = request.form['channelName']
+    channel = Channel.query.filter_by(name=chname, creator=current_user.get_id()).first()
+
+    if channel is None:
+        return redirect(url_for('panel'))
+
+    if request.form.get('descriptioncheck', False):
+        channel.description = request.form.get('inputDescription', channel.description)
+
+    if request.form.get('passwordcheck', False):
+        channel.setPassword(request.form.get('inputPassword', None))
+    else:
+        channel.hashed = None
+        channel.salt = None
+
+    
+    if request.form.get('timecheck', False):
+        channel.start = request.form.get('inputStartDate', None)
+        channel.end = request.form.get('inputEndDate', None)
+    else:
+        channel.start = None
+        channel.end = None
+
+    if request.form.get('limitcheck', False):
+        channel.member_limit = request.form.get('inputLimit', None)
+    else:
+        channel.member_limit = None
+            
+
+    db.session.commit()
+
+    return redirect(url_for('panel'))
         
 
 @app.route('/profile', methods=['GET', 'POST'])

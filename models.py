@@ -61,9 +61,9 @@ class Channel(db.Model):
     name = db.Column(db.Text, nullable = False, primary_key=True)
     creator = db.Column(db.String(100), db.ForeignKey('users.username'), nullable = False)
     description = db.Column(db.String(200),nullable = False)
-    start = db.Column(db.DateTime, nullable = True)
-    end = db.Column(db.DateTime, nullable = True)
-    creation_date = db.Column(db.DateTime, nullable = False)
+    start = db.Column(db.Date, nullable = True)
+    end = db.Column(db.Date, nullable = True)
+    creation_date = db.Column(db.Date, nullable = False)
     member_limit = db.Column(db.Integer, nullable = True)
     hashed = db.Column(db.Text, nullable=True)
     salt = db.Column(db.Text, nullable=True)
@@ -74,6 +74,11 @@ class Channel(db.Model):
         self.creator = creator
         self.description = description
         self.creation_date = datetime.datetime.now()
+
+    def setPassword(self, password):
+        if password is not None:
+            self.salt = self.createSalt()
+            self.hashed = self.createHash(self.salt, password)
         
 
     def createSalt(self):
