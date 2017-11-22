@@ -101,8 +101,8 @@ class Message(db.Model):
 
     messageID = db.Column(db.String(10), primary_key=True)
     messageItself = db.Column(db.String(500), nullable=False)
-    fromWho = db.Column(db.String(100), unique=True, nullable=False)
-    toWho = db.Column(db.String(30), unique=True, nullable=False)
+    fromWho = db.Column(db.String(100), db.ForeignKey('users.username'), unique=True, nullable=False)
+    toWho = db.Column(db.String(30), db.ForeignKey('channels.channelname'), unique=True, nullable=False)
     messageDate = db.Column(db.DateTime, nullable=False)
     sent = db.Column(db.Boolean, nullable=False)
 
@@ -119,8 +119,8 @@ class Message(db.Model):
 class Member(db.Model):
     __tablename__ = 'members'
 
-    channelName = db.Column(db.Text, primary_key=True)
-    memberName = db.Column(db.String(100), primary_key=True)
+    channelName = db.Column(db.Text, db.ForeignKey('channels.channelname'), primary_key=True)
+    memberName = db.Column(db.String(100), db.ForeignKey('users.username'), primary_key=True)
     entryDate = db.Column(db.Date, nullable=False)
     prefersEmail = db.Column(db.Boolean, nullable=False)
     prefersPhone = db.Column(db.Boolean, nullable=False)
