@@ -1,24 +1,51 @@
 ﻿#!/usr/bin/env python
 #-*-coding:utf-8-*-
 from gmail_api_wrapper.crud.read import GmailAPIReadWrapper
+from gmail_api_wrapper.crud.write import GmailAPIWriteWrapper
+from app import User, Channel, Member
 import base64
-    
+import re
 
 gmail_api = GmailAPIReadWrapper()
-
+api = GmailAPIWriteWrapper()
 
 # Check unread messages. Returns a list of dicts in the below format
 
 dicts = gmail_api.check_new_mail()
 
 
+new_message = 0
+result=""
 for x in dicts:
+    new_message = new_message +1
     str1 = str(base64.b64decode(x['base64_msg_body']))
-    str1,str2 = str1.split("b'") #Baştaki gereksiz b' kısmını kestim.
-    print(str2.strip("\n'"), end='') #Sondaki gereksiz ' kısmını kestim
+    #str1,str2 = str1.split("b'") #Baştaki gereksiz b' kısmını kestim.
+    #str2.strip("\n'") #Sondaki gereksiz ' kısmını kestim
     #Sondaki \r\n silinecek.
     #Türkçe karekter desteklenmiyor.
-    print("\n")
+    #print(x)
+    #print("\n")
+    
+if new_message > 0:
+    result = re.search('<(.*)>', x['from'])
+    #from kısmındaki gereksiz veriden kurtulup sadece mail kısmını elde ettik
+    r = Member.query.filter_by(channelName=x['subject']).all()
+    for t in r:
+        s = User.query.filter_by(username=t.memberName).all()
+        #s = username'i t.memberName olan satırların hepsi. her bir username için dönüyor.
+        for z in s:
+            #her bir username için, onların e-maili dönüyor.
+            #bir username bir maile sahip olduğu için x=z eşitliği var
+            if(z.email == result.group(1)):
+                continue
+            api.compose_mail(subject=x['subject'], body=str1, to=z.email)
+            #kanala mesaj gonderenın mailine gelince continue deyip mesajın geri atılmamasını sağladık
+else:
+    print("Kanala atilan yeni bir mesaj bulunmamaktadir")
+            
+
+
+    
 
   
 
@@ -30,7 +57,7 @@ for x in dicts:
         {
             'subject': 'Sample Subject',
             'base64_msg_body': 'base64string',
-            'from:' 'exapmle@mail_server.com'
+            'from': 'exapmle@mail_server.com'
             'date': '2017-09-16T10:57:12.4323'
         },
     ]
