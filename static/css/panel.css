@@ -30,6 +30,9 @@ body {
 /* Modal Body */
 .modal-body {padding: 2px 16px;}
 
+.setting-info {
+	color: #9b9b9b;
+}
 
 /* Modal Content/Box */
 .modal-content {
