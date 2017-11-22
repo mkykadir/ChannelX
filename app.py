@@ -11,6 +11,7 @@ from flask_login import LoginManager, login_required, login_user, logout_user, c
 import argparse
 import petname
 from random import randint
+import datetime
 app = Flask(__name__)
 # app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -22,7 +23,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 db.create_all() # create new models automatically
 
-from models import User, Channel
+from models import User, Channel, Member
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -213,6 +214,136 @@ def create_channel():
     db.session.add(channel)
     db.session.commit()
     return redirect(url_for('home'))
+
+@app.route('/channel/<chname>/<memname>', methods=['GET'])
+@login_required
+def kick_user(chname, memname):
+    queryChannel = Channel.query.filter_by(name=chname, creator=current_user.get_id()).first()
+    if queryChannel is None:
+        # FLASH not admin of channel
+        return redirect(url_for('panel'))
+
+    try:
+        Member.query.filter_by(channelName=chname, memberName=memname).delete()
+        db.session.commit()
+    except:
+        # FLASH non member of channel
+        return redirect(url_for('panel'))
+
+    return redirect(url_for('channel_entry', chname=chname))
+
+@app.route('/channel/<chname>', methods=['POST', 'GET'])
+@login_required
+def channel_entry(chname):
+    print(chname)
+    if request.method == 'GET':
+        queryChannel = Channel.query.filter_by(name=chname, creator=current_user.get_id()).first()
+        if queryChannel is not None:
+            # user is creator of the channel show the member list
+            members = Member.query.filter_by(channelName=chname)
+            return render_template('channel.html', name=chname, members=members)
+        else:
+            # user is not creator of channel
+            isMember = Member.query.filter_by(channelName=chname, memberName=current_user.get_id()).first()
+            if isMember is not None:
+                # FLASH user already member of channel
+                return redirect(url_for('panel'))
+            else:
+                
+                queryChannel = Channel.query.filter_by(name=chname).first()
+                if queryChannel is None:
+                    # FLASH channel not exists
+                    return redirect(url_for('panel'))
+
+                if queryChannel.start is not None:
+                    currentDate = datetime.datetime.now().date()
+                    if queryChannel.start > currentDate or queryChannel.end < currentDate:
+                        # FLASH channel deadline
+                        return redirect(url_for('panel'))
+
+                if queryChannel.member_limit is not None:
+                    member_count = db.session.query(Member).filter_by(channelName=queryChannel.name).count()
+                    #member_count = Member.query(Member.memberName).filter_by(channelName=queryChannel.name).count()
+                    if member_count == queryChannel.member_limit:
+                        #FLASH too many users
+                        return redirect(url_for('panel'))
+
+                passrequired = False
+                if queryChannel.hashed is not None:
+                    passrequired = True
+                    
+                return render_template('channel.html', name=chname, passrequired=passrequired, description=queryChannel.description)
+
+    if request.method == 'POST':
+        print("in post method")
+        queryChannel = Channel.query.filter_by(name=chname, creator=current_user.get_id()).first()
+        if queryChannel is not None:
+            print("creator of channel")
+            return redirect(url_for('panel'))
+        else:
+            print("not creator")
+            isMember = Member.query.filter_by(channelName=chname, memberName=current_user.get_id()).first()
+            if isMember is not None:
+                print("already member")
+                # FLASH user already member of channel
+                return redirect(url_for('panel'))
+            else:
+                print("not member")
+                queryChannel = Channel.query.filter_by(name=chname).first()
+                if queryChannel is None:
+                    # FLASH channel not exists
+                    print("channel not exists")
+                    return redirect(url_for('panel'))
+
+                passwordGet = request.form.get('inputPassword', None)
+                preferEmail = request.form.get('inputPreferEmail', False)
+                preferSms = request.form.get('inputPreferSms', False)
+
+                if preferEmail is False and preferSms is False:
+                    print("select at least one")
+                    # FLASH user should pick at least one
+                    return redirect(url_for('channel_entry', chname=chname))
+                
+                if queryChannel.hashed is not None and passwordGet is None:
+                    # FLASH password required
+                    print("pass required")
+                    return redirect(url_for('channel_entry', chname=chname))
+                currentDate = datetime.datetime.now().date()
+                if queryChannel.start is not None:
+                    
+                    if queryChannel.start > currentDate or queryChannel.end < currentDate:
+                        # FLASH channel deadline
+                        print("deadline")
+                        return redirect(url_for('panel'))
+
+                
+                if queryChannel.member_limit is not None:
+                    member_count = db.session.query(Member).filter_by(channelName=queryChannel.name).count()
+                    # member_count = Member.query(Member.memberName).filter_by(channelName=queryChannel.name).count()
+                    if member_count == queryChannel.member_limit:
+                        #FLASH too many users
+                        return redirect(url_for('panel'))
+
+                if queryChannel.hashed is None:
+                    print("No need for pass")
+                    # no need for password
+                    member = Member(chname, current_user.get_id(), currentDate, preferEmail, preferSms)
+                    db.session.add(member)
+                    db.session.commit()
+                else:
+                    print("need for pass")
+                    newhash = queryChannel.createHash(queryChannel.salt, passwordGet)
+                    if newhash == queryChannel.hashed:
+                        print("correct pass")
+                        member = Member(chname, current_user.get_id(), currentDate, preferEmail, preferSms)
+                        db.session.add(member)
+                        db.session.commit()
+                    else:
+                        print("wrong pass")
+                        # FLASH wrong password
+                        return redirect(url_for('channel_entry', chname=chname))
+                return redirect(url_for('panel'))
+    return render_template('channel.html', name=chname)
 
 @app.route('/channelu', methods=['POST'])
 @login_required

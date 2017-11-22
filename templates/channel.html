@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://getbootstrap.com/docs/4.0/examples/signin/ -->
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>Signin | ChannelX</title>
+
+		<!-- Bootstrap core CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+
+		<!-- Custom styles for this template -->
+		
+	</head>
+
+  <body>
+	<div class="container py-3">
+		<div class="row">
+			<div class="mx-auto col-md">
+						<!-- form user info -->
+						<div class="card">
+							<div class="card-header">
+								<h4 class="mb-0">
+									{% if members %}
+									Manage Members of {{name}}
+									{% else %}
+									Enter {{name}}
+									{% endif %}
+								</h4>
+							</div>
+							<div class="card-body">
+								{% with messages = get_flashed_messages(with_categories=true) %}
+								{% if messages %}
+								{% for category, message in messages %}
+									<div class="alert alert-{{ category }}">
+									  <span class="closebtn" style="cursor: pointer;" onclick="this.parentElement.style.display='none';">&times;</span> 
+									  {{ message }}
+									</div>								
+								{% endfor %}								
+								{% endif %}
+								{% endwith %}
+								
+								{% if members %}
+								<table class="table">
+									<thead>
+										<th>Username</th>
+										<th>Entry Date</th>
+										<th>Operations</th>
+									</thead>
+									<tbody>
+										{% for member in members %}
+											<tr>
+												<td>
+													{{ member.memberName }}
+												</td>
+												<td>
+													{{ member.entrDate }}
+												</td>
+												<td>
+													<a href="{{ url_for('kick_user', chname=name, memname=member.memberName) }}" class="btn btn-danger"><i class="fa fa-ban" aria-hidden="true"></i> Kick</a>
+												</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+								{% else %}								
+								{% if passrequired %}
+								<p>{{ description }}</p>
+								<form class="form" name="loginform" method="post" action="{{ url_for('channel_entry', chname=name) }}">
+									<div class="form-group row">
+										<label class="col-lg-3 col-form-label form-control-label">Password</label>
+										<div class="col-lg-9">
+											<input name="inputPassword" type="password" id="inputPassword" class="form-control" placeholder="Enter password" required="">
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="col-lg-9">
+											<label><input name="inputPreferEmail" type="checkbox" id="inputPreferEmail" class="form-control"> Get messages via E-Mail</label>
+										</div>
+									</div>
+									
+									<div class="form-group row">
+										<div class="col-lg-9">
+											<label><input name="inputPreferSms" type="checkbox" id="inputPreferSms" class="form-control"> Get messages via SMS</label>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="col-lg-9">
+											<button class="btn btn-success" type="submit">Enter Channel</button>
+										</div>
+									</div>
+								</form>
+								{% else %}
+								<p>{{ description }}</p>
+								<form class="form" name="nopassform" method="post" action="{{ url_for('channel_entry', chname=name) }}">
+									<div class="form-group row">
+										<div class="col-lg-9">
+											<label><input name="inputPreferEmail" type="checkbox" id="inputPreferEmail" class="form-control"> Get messages via E-Mail</label>
+										</div>
+									</div>
+									
+									<div class="form-group row">
+										<div class="col-lg-9">
+											<label><input name="inputPreferSms" type="checkbox" id="inputPreferSms" class="form-control"> Get messages via SMS</label>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="col-lg-9">
+											<button class="btn btn-success" type="submit">Enter Channel</button>
+										</div>
+									</div>
+								</form>
+								{% endif %}
+								{% endif %}
+							</div>
+						</div>
+						<!-- /form user info -->
+			</div>
+		</div>
+	</div> 
+
+</body></html>

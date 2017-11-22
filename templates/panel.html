@@ -154,6 +154,7 @@
 							<div class="form-group row">
 								<button style="color: white;" name="action" value="edit" class="btn btn-success" type="submit">Save Changes</button>
 								<a style="margin-left: 3px; color: white; cursor: pointer;" class="btn btn-danger" id="removeChannelButton">Delete Channel</a>
+								<a onClick="manage_members()" style="margin-left: 3px; color: white; cursor: pointer;" class="btn btn-warning" id="manageMembers">Manage Members</a>
 							</div>
 						</form>
 						
@@ -316,6 +317,13 @@
 						window.location.href = $SCRIPT_ROOT + '/panel';
 					}
 				});
+			}
+		</script>
+		
+		<script>
+			function manage_members(){
+				var channel_name = $("input[id='channelName']").val();
+				window.location.href = $SCRIPT_ROOT + '/channel/' + channel_name;
 			}
 		</script>
 		

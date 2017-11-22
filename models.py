@@ -119,9 +119,9 @@ class Message(db.Model):
 class Member(db.Model):
     __tablename__ = 'members'
 
-    channelName = db.Column(db.String(30), primary_key=True)
+    channelName = db.Column(db.Text, primary_key=True)
     memberName = db.Column(db.String(100), primary_key=True)
-    entryDate = db.Column(db.DateTime, nullable=False)
+    entryDate = db.Column(db.Date, nullable=False)
     prefersEmail = db.Column(db.Boolean, nullable=False)
     prefersPhone = db.Column(db.Boolean, nullable=False)
     
@@ -131,7 +131,7 @@ class Member(db.Model):
         self.memberName = memberName
         self.entryDate = entryDate
         self.prefersEmail = prefersEmail
-        self.prefersPhone = self.prefersPhone
+        self.prefersPhone = prefersPhone
     
         
 
