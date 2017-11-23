@@ -37,7 +37,27 @@ Make sure you have added required environmental variables to your system for loc
 * Variable required for SQL server:
     Name: CHANNELX_SQL_SERVER
 	Variable: postgresql://adminusername:adminpassword@localhost/channelx
-
+	
+* Variable required for mail redirecting;
+	Name: GAW_APPLICATION_NAME
+	Variable: e-mail-okuma 
+	
+* Variable required for mail sending;
+	Name: GAW_CLIENT_SECRET_FILE_PATH
+	Variable: C:\Users\Root\Desktop\channelx\client_secret.json(write your path)
+	
+* Variable required for mail sending;
+	Name: GAW_DISABLE_SSL_CERTS
+	Variable: True
+	
+* Variable required for mail sending;
+	Name: GAW_SCOPES
+	Variable: https://mail.google.com/
+	
+* Variable required for mail sending;
+	Name: GAW_USER_ID
+	Variable: untitledchannelx@gmail.com
+	
 Before running project, this needs to be executed if models.py is changed, i.e. new tables added
 
 * Open terminal or command prompt inside project folder
