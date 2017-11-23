@@ -78,7 +78,9 @@
 					<li>
 						<a href="{{ url_for('logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> Log Out</a>
 					</li>
-					<hr>
+					<li>
+						<a>Your channels</a>
+					</li>
 					{% for channel in channels %}
 					<li><!-- Channel List item -->
 						<a href="#" id="{{ channel.name }}" onClick="get_channel_info(this.id)">{{ channel.name }}</a>
@@ -88,6 +90,15 @@
 					<li>
 						<a href="#" id="addChannelBtn"><i class="fa fa-plus" aria-hidden="true"></i> Add channel...</a>
 					</li>
+					<hr>
+					<li>
+						<a>Membership</a>
+					</li>
+					{% for channel in membership %}
+					<li><!-- Channel List item -->
+						<a href="{{ url_for('channel_entry', chname=channel.channelName) }}" id="{{ channel.channelName }}">{{ channel.channelName }}</a>
+					</li>
+					{% endfor %}
 				</ul>
 			</div>
 			<!-- /#sidebar-wrapper -->
