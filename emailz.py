@@ -18,14 +18,8 @@ new_message = 0
 result=""
 for x in dicts:
     new_message = new_message +1
-    str1 = str(base64.b64decode(x['base64_msg_body']))
-    #str1,str2 = str1.split("b'") #Baştaki gereksiz b' kısmını kestim.
-    #str2.strip("\n'") #Sondaki gereksiz ' kısmını kestim
-    #Sondaki \r\n silinecek.
-    #Türkçe karekter desteklenmiyor.
-    #print(x)
-    #print("\n")
-    
+    str1 = str(base64.b64decode(x['base64_msg_body']).decode('utf-8'))
+   
 if new_message > 0:
     result = re.search('<(.*)>', x['from'])
     #from kısmındaki gereksiz veriden kurtulup sadece mail kısmını elde ettik
