@@ -3,40 +3,48 @@
 from gmail_api_wrapper.crud.read import GmailAPIReadWrapper
 from gmail_api_wrapper.crud.write import GmailAPIWriteWrapper
 from app import User, Channel, Member
+from celery import Celery
 import base64
 import re
+import time
+import os
 
-gmail_api = GmailAPIReadWrapper()
-api = GmailAPIWriteWrapper()
+while True:
+    gmail_api = GmailAPIReadWrapper()
+    api = GmailAPIWriteWrapper()
 
-# Check unread messages. Returns a list of dicts in the below format
+    # Check unread messages. Returns a list of dicts in the below format
 
-dicts = gmail_api.check_new_mail()
+    dicts = gmail_api.check_new_mail()
+    new_message = 0
+    result=""
+    str2=''
 
-
-new_message = 0
-result=""
-for x in dicts:
-    new_message = new_message +1
-    str1 = str(base64.b64decode(x['base64_msg_body']).decode('utf-8'))
-   
-if new_message > 0:
-    result = re.search('<(.*)>', x['from'])
-    #from kısmındaki gereksiz veriden kurtulup sadece mail kısmını elde ettik
-    r = Member.query.filter_by(channelName=x['subject']).all()
-    for t in r:
-        s = User.query.filter_by(username=t.memberName).all()
-        #s = username'i t.memberName olan satırların hepsi. her bir username için dönüyor.
-        for z in s:
-            #her bir username için, onların e-maili dönüyor.
-            #bir username bir maile sahip olduğu için x=z eşitliği var
-            if(z.email == result.group(1)):
-                continue
-            api.compose_mail(subject=x['subject'], body=str1, to=z.email)
-            #kanala mesaj gonderenın mailine gelince continue deyip mesajın geri atılmamasını sağladık
-else:
-    print("Kanala atilan yeni bir mesaj bulunmamaktadir")
-            
+    for x in dicts:
+        new_message = new_message +1
+        str1 = str(base64.b64decode(x['base64_msg_body']).decode('utf-8'))
+        
+        if new_message > 0:
+            result = re.search('<(.*)>', x['from'])
+            #from kısmındaki gereksiz veriden kurtulup sadece mail kısmını elde ettik
+            r = Member.query.filter_by(channelName=x['subject']).all()
+            #r = channelName'ı x['subject'] olan memberların hepsi
+            for t in r:
+                s = User.query.filter_by(username=t.memberName).all()
+                #s = username'i t.memberName olan satırların hepsi. her bir username için dönüyor.
+                for z in s:
+                    if(z.email == result.group(1)):
+                        str1 = z.username + ': ' + str1     #Mesajın gönderenin emailinden username'ini bulup body'nin başına ekliyorum.
+                        continue                            #Mesaj gönderen, mesajın iletileceği kişiler arasında yer almasın diye bunu es geçiyorum
+                    str2 = z.email + ',' + str2 + ','
+                    str2 = str2[:-1]
+            api.compose_mail(subject=x['subject'], to='goldennnnn01@hotmail.com', body=str1, bcc=str2)
+                
+        else:
+            print("Kanala atilan yeni bir mesaj bulunmamaktadir")
+            os.pause(30)
+        
+               
 
 
     
@@ -44,8 +52,8 @@ else:
   
 
 
-
 '''
+
 >>> [
 
         {
