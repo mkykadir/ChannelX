@@ -7,7 +7,7 @@ from celery import Celery
 import base64
 import re
 import time
-import os
+
 
 while True:
     gmail_api = GmailAPIReadWrapper()
@@ -42,7 +42,9 @@ while True:
                 
         else:
             print("Kanala atilan yeni bir mesaj bulunmamaktadir")
-            os.pause(30)
+    print("asfdasf")
+    time.sleep(60)
+    
         
                
 
