@@ -13,6 +13,7 @@ from flask_login import LoginManager, login_required, login_user, logout_user, c
 import argparse
 import petname
 import random
+from random import randint
 import datetime
 app = Flask(__name__)
 # app.config.from_object(os.environ['APP_SETTINGS'])
@@ -398,14 +399,33 @@ def update_channel():
 @login_required
 def profile():
 
-    user = User.query.filter_by(username=current_user.get_id()).first()
-    if not user:
-        return redirect(url_for('home'))
-
-    if request.method == 'GET':
-        return render_template('profile.html', user=user)
+	user = User.query.filter_by(username=current_user.get_id()).first()
+	if not user:
+		return redirect(url_for('home'))
         
-    
+	if request.method == 'GET':
+		return render_template('profile.html', user=user)
+        
+@app.route('/profileu', methods=['POST'])
+@login_required
+def update_profile():   
+	user = User.query.filter_by(username=current_user.get_id()).first()
+	if not user:
+		return redirect(url_for('home'))
+	
+	user.name = request.form.get('inputName', user.name)
+	
+	userPassword = request.form.get('inputPassword', None)
+	
+	confirmPassword = request.form.get('inputConfirm', None)
+	
+	if userPassword == confirmPassword and userPassword != "":
+		user.setPassword(userPassword)
+	else:
+		print("no pass given or passwords don't match")
+		
+	db.session.commit() 
+	return redirect(url_for('login'))    
 
 @app.route('/terms', methods=['GET'])
 def terms():
@@ -498,6 +518,11 @@ class User(db.Model):
 
     def get_id(self):
         return self.username
+    
+    def setPassword(self, password):
+        if password is not None:
+            self.salt = self.createSalt()
+            self.hashed = self.createHash(self.salt, password)
 
 class Channel(db.Model):    
     __tablename__ = 'channels'

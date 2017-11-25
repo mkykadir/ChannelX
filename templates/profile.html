@@ -24,11 +24,11 @@
 								<h4 class="mb-0">User Information</h4>
 							</div>
 							<div class="card-body">
-								<form class="form" name="loginform" method="post" action="{{ url_for('login') }}">
+								<form class="form" name="loginform" method="post" action="{{ url_for('update_profile') }}">
 									<div class="form-group row">
 										<label class="col-lg-3 col-form-label form-control-label">Username</label>
 										<div class="col-lg-9">
-											<input name="inputUsername" type="text" class="form-control" placeholder="Enter username" autofocus="" value="{{ user.username }}"/>
+											<input name="inputUsername" type="text" class="form-control" placeholder="Enter username" autofocus="" value="{{ user.username }}" readonly />
 										</div>
 									</div>
 									<div class="form-group row">
@@ -40,13 +40,13 @@
 									<div class="form-group row">
 										<label class="col-lg-3 col-form-label form-control-label">Email Address</label>
 										<div class="col-lg-9">
-											<input class="form-control" name="inputEmail" type="email" value="{{ user.email }}"/>
+											<input class="form-control" name="inputEmail" type="email" value="{{ user.email }}" readonly />
 										</div>
 									</div>
 									<div class="form-group row">
 										<label class="col-lg-3 col-form-label form-control-label">Phone Number</label>
 										<div class="col-lg-9">
-											<input class="form-control" name="inputPhone" type="tel" placeholder="Enter phone number" value="{{ user.phone }}" />
+											<input class="form-control" name="inputPhone" type="tel" placeholder="Enter phone number" value="{{ user.phone }}" readonly />
 										</div>
 									</div>
 									<div class="form-group row">
@@ -64,7 +64,7 @@
 									<div class="form-group row">
 										<div class="col-lg-9">
 											<button class="btn btn-success" type="submit">Save</button>
-											<a href="{{ url_for('panel') }}" class="btn btn-primary">Panel</a>
+											<a href="{{ url_for('panel') }}" class="btn btn-danger">Cancel</a>
 										</div>
 									</div>
 								</form>
