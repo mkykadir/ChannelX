@@ -169,11 +169,8 @@ def panel():
 def search():
     if request.method == 'POST':
         req = request.form.get('req', None)
-        print(req)
         membership = db.session.query(Member.channelName).filter(Member.memberName==current_user.get_id()).all()
-        print(membership)
         channels = db.session.query(Channel).order_by(Channel.name).filter(and_(Channel.name.like("%" + req + "%"), Channel.creator!=current_user.get_id(), not_(Channel.name.in_(membership))))
-        print(channels)
         return render_template('search.html', search=req, channels=channels)
     
 @app.route('/_channeli', methods=['GET'])
