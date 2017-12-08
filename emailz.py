@@ -3,7 +3,6 @@
 from gmail_api_wrapper.crud.read import GmailAPIReadWrapper
 from gmail_api_wrapper.crud.write import GmailAPIWriteWrapper
 from app import User, Channel, Member
-from celery import Celery
 import base64
 import re
 import time
@@ -22,9 +21,10 @@ while True:
 
     for x in dicts:
         new_message = new_message +1
-        str1 = str(base64.b64decode(x['base64_msg_body']).decode('utf-8'))
         
-        if new_message > 0:
+        if new_message > 0 and x['base64_msg_body'] != []:
+            str1 = str(base64.urlsafe_b64decode(x['base64_msg_body']).decode('utf-8'))
+            print(str1);
             result = re.search('<(.*)>', x['from'])
             #from kısmındaki gereksiz veriden kurtulup sadece mail kısmını elde ettik
             r = Member.query.filter_by(channelName=x['subject']).all()
@@ -39,9 +39,9 @@ while True:
                     str2 = z.email + ',' + str2 + ','
                     str2 = str2[:-1]
             api.compose_mail(subject=x['subject'], to='goldennnnn01@hotmail.com', body=str1, bcc=str2)
-                
-        else:
-            print("Kanala atilan yeni bir mesaj bulunmamaktadir")
+    
+    if new_message <= 0:
+        print("Kanala atilan yeni bir mesaj bulunmamaktadir")
     print("asfdasf")
     time.sleep(60)
     
