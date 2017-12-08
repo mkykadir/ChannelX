@@ -94,6 +94,16 @@
 					<li>
 						<a>Membership</a>
 					</li>
+					<form id="search-form" name="search-form" class="form" method="post" action="{{ url_for('search', search=input) }}">
+					<div id="custom-search-input">
+						<div class="input-group col-md-12">
+							<input name='req' type="text" class="form-control input-lg" placeholder="Search for a channel!" />
+							<span class="input-group-btn">
+								<button name="action" value="input" class="btn btn-success" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+							</span>
+						</div>
+					</div>
+					</form>
 					{% for channel in membership %}
 					<li><!-- Channel List item -->
 						<a href="{{ url_for('channel_entry', chname=channel.channelName) }}" id="{{ channel.channelName }}">{{ channel.channelName }}</a>

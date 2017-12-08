@@ -205,3 +205,28 @@ body {
 		padding-left: 50px;
 	}
 }
+
+#custom-search-input{
+	
+}
+
+#custom-search-input input{
+	background: #222222;
+    border: 0;
+    box-shadow: none;
+}
+
+#custom-search-input button{
+    background: #888888;
+    box-shadow: none;
+    border: 0;
+    color: #000000;
+    border-left: solid 1px #ccc;
+}
+
+#custom-search-input button:hover{
+    border: 0;
+    box-shadow: none;
+    border-left: solid 1px #ccc;
+}
+

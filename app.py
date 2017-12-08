@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+from sqlalchemy import func, or_, not_, and_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship
 from forms import SignUpForm
@@ -164,6 +164,18 @@ def panel():
     membership = db.session.query(Member.channelName).filter(Member.memberName==current_user.get_id())
     return render_template('panel.html', username=current_user.get_id(), channels=channels, membership=membership)
 
+@app.route('/search', methods=['POST'])
+@login_required
+def search():
+    if request.method == 'POST':
+        req = request.form.get('req', None)
+        print(req)
+        membership = db.session.query(Member.channelName).filter(Member.memberName==current_user.get_id()).all()
+        print(membership)
+        channels = db.session.query(Channel).order_by(Channel.name).filter(and_(Channel.name.like("%" + req + "%"), Channel.creator!=current_user.get_id(), not_(Channel.name.in_(membership))))
+        print(channels)
+        return render_template('search.html', search=req, channels=channels)
+    
 @app.route('/_channeli', methods=['GET'])
 @login_required
 def channel_info_json():
