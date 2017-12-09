@@ -74,7 +74,6 @@ def login():
             flash("Wrong credentials", "danger")
             return redirect(url_for('login'))
 
-
 @app.route('/verify', methods=['GET'])
 def verify():
     if 'username' in session:
@@ -97,8 +96,6 @@ def verify():
         flash("Non-registered user!", "danger")
 
     return redirect(url_for('login'))
-
-
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -151,7 +148,6 @@ def signup():
 
     return render_template('signup.html', form=form)
 
-
 @app.route('/logout', methods=['GET'])
 @login_required
 def logout():
@@ -194,7 +190,7 @@ def channel_info_json():
             enddate = queryChannel.end.strftime('%Y-%m-%d')
 
         result = {'chname': queryChannel.name, 'chcreatedate': queryChannel.creation_date.strftime('%Y-%m-%d'),'chdescription': queryChannel.description, 'chstart': startdate, 'chend': enddate, 'chlimit': queryChannel.member_limit, 'chprotected': protected}
-        print(result)
+        # print(result)
         return jsonify(result)
     else:
         return redirect(url_for('panel'))
@@ -203,11 +199,12 @@ def channel_info_json():
 @login_required
 def channel_remove_json():
     channel_name = request.args.get('chname')
-    try:
-        Channel.query.filter_by(name=channel_name, creator=current_user.get_id()).delete()
+    channel = Channel.query.filter_by(name=channel_name, creator=current_user.get_id()).first()
+    if channel:
+        db.session.delete(channel)
         db.session.commit()
         result = {'result': 200}
-    except:
+    else:
         result = {'result': 404}
 
     return jsonify(result)
@@ -255,7 +252,7 @@ def kick_user(chname, memname):
 @app.route('/channel/<chname>', methods=['POST', 'GET'])
 @login_required
 def channel_entry(chname):
-    print(chname)
+    #print(chname)
     if request.method == 'GET':
         queryChannel = Channel.query.filter_by(name=chname, creator=current_user.get_id()).first()
         if queryChannel is not None:
@@ -295,27 +292,27 @@ def channel_entry(chname):
             return render_template('channel.html', name=chname, passrequired=passrequired, description=queryChannel.description)
 
     if request.method == 'POST':
-        print("in post method")
+        #print("in post method")
         queryChannel = Channel.query.filter_by(name=chname, creator=current_user.get_id()).first()
         if queryChannel is not None:
-            print("creator of channel")
+            #print("creator of channel")
             return redirect(url_for('panel'))
         else:
-            print("not creator")
+            #print("not creator")
             isMember = Member.query.filter_by(channelName=chname, memberName=current_user.get_id()).first()
             if isMember is not None:
-                print("already member")
+                #print("already member")
                 # FLASH user already member of channel
                 isMember.prefersEmail = request.form.get('inputPreferEmail', False)
                 isMember.prefersPhone = request.form.get('inputPreferSms', False)
                 db.session.commit()
                 return redirect(url_for('channel_entry', chname=chname))
             else:
-                print("not member")
+                #print("not member")
                 queryChannel = Channel.query.filter_by(name=chname).first()
                 if queryChannel is None:
                     # FLASH channel not exists
-                    print("channel not exists")
+                    #print("channel not exists")
                     return redirect(url_for('panel'))
 
                 passwordGet = request.form.get('inputPassword', None)
@@ -323,20 +320,20 @@ def channel_entry(chname):
                 preferSms = request.form.get('inputPreferSms', False)
 
                 if preferEmail is False and preferSms is False:
-                    print("select at least one")
+                    #print("select at least one")
                     # FLASH user should pick at least one
                     return redirect(url_for('channel_entry', chname=chname))
 
                 if queryChannel.hashed is not None and passwordGet is None:
                     # FLASH password required
-                    print("pass required")
+                    #print("pass required")
                     return redirect(url_for('channel_entry', chname=chname))
                 currentDate = datetime.datetime.now().date()
                 if queryChannel.start is not None:
 
                     if queryChannel.start > currentDate or queryChannel.end < currentDate:
                         # FLASH channel deadline
-                        print("deadline")
+                        #print("deadline")
                         return redirect(url_for('panel'))
 
 
@@ -348,21 +345,21 @@ def channel_entry(chname):
                         return redirect(url_for('panel'))
 
                 if queryChannel.hashed is None:
-                    print("No need for pass")
+                    #print("No need for pass")
                     # no need for password
                     member = Member(chname, current_user.get_id(), currentDate, preferEmail, preferSms)
                     db.session.add(member)
                     db.session.commit()
                 else:
-                    print("need for pass")
+                    #print("need for pass")
                     newhash = queryChannel.createHash(queryChannel.salt, passwordGet)
                     if newhash == queryChannel.hashed:
-                        print("correct pass")
+                        #print("correct pass")
                         member = Member(chname, current_user.get_id(), currentDate, preferEmail, preferSms)
                         db.session.add(member)
                         db.session.commit()
                     else:
-                        print("wrong pass")
+                        #print("wrong pass")
                         # FLASH wrong password
                         return redirect(url_for('channel_entry', chname=chname))
                 return redirect(url_for('panel'))
@@ -431,8 +428,6 @@ def update_profile():
 
 	if userPassword == confirmPassword and userPassword != "":
 		user.setPassword(userPassword)
-	else:
-		print("no pass given or passwords don't match")
 
 	db.session.commit()
 	return redirect(url_for('login'))
@@ -516,11 +511,6 @@ class User(db.Model):
 
 
     def is_active(self):
-        if self.email_verified:
-            print("True")
-        else:
-            print("False")
-
         return self.email_verified
 
     def is_anonymous(self):
