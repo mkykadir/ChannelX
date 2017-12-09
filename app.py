@@ -41,7 +41,7 @@ def unauthorized():
 def home():
     if current_user.is_authenticated:
         return redirect(url_for('panel'))
-    
+
     return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -60,7 +60,7 @@ def login():
         if username is "" or password is "":
             flash("Please fill credentials", "warning")
             return redirect(url_for('login'))
-            
+
         try:
             queryUser = User.query.filter_by(username=username).first()
             newhash = queryUser.createHash(queryUser.salt, password)
@@ -72,7 +72,7 @@ def login():
                 return redirect(url_for('login'))
         except AttributeError:
             return redirect(url_for('login'))
-        
+
 
 @app.route('/verify', methods=['GET'])
 def verify():
@@ -81,8 +81,8 @@ def verify():
 
     username = request.args.get('username')
     if not username:
-        return redirect(url_for('home'))
-    
+        return redirect(url_for('login'))
+
     user = User.query.filter_by(username=username).first()
 
     if user:
@@ -95,9 +95,9 @@ def verify():
     else:
         flash("Non-registered user!", "danger")
 
-    return redirect(url_for('home'))
-    
-    
+    return redirect(url_for('login'))
+
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -105,7 +105,7 @@ def signup():
         return redirect(url_for('panel'))
 
     form = SignUpForm(request.form)
-    
+
     if request.method == 'POST' and form.validate():
         try:
             user = User(form.username.data, form.email.data, form.phone.data,
@@ -115,12 +115,12 @@ def signup():
             db.session.commit()
 
             mailaddress = form.email.data
-            
+
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.ehlo()
             server.starttls()
             server.login("untitledchannelx", mailpassword)
-            
+
             msg = MIMEMultipart('alternative')
             msg['Subject'] = "ChannelX: Account Verification"
             msg['From'] = "untitledchannelx@gmail.com"
@@ -137,7 +137,7 @@ def signup():
                 </html>
                 """
             msg.attach(MIMEText(html, 'html'))
-            
+
             server.sendmail("untitledchannelx@gmail.com", mailaddress, msg.as_string())
             server.close()
         except IntegrityError:
@@ -147,13 +147,13 @@ def signup():
         flash("Thanks for registering, we've sent email for validation", 'info')
         return redirect(url_for('login'))
 
-    
+
     return render_template('signup.html', form=form)
 
 
 @app.route('/logout', methods=['GET'])
 @login_required
-def logout():   
+def logout():
     logout_user()
     return redirect(url_for('home'))
 
@@ -172,7 +172,7 @@ def search():
         membership = db.session.query(Member.channelName).filter(Member.memberName==current_user.get_id()).all()
         channels = db.session.query(Channel).order_by(Channel.name).filter(and_(Channel.name.like("%" + req + "%"), Channel.creator!=current_user.get_id(), not_(Channel.name.in_(membership))))
         return render_template('search.html', search=req, channels=channels)
-    
+
 @app.route('/_channeli', methods=['GET'])
 @login_required
 def channel_info_json():
@@ -191,7 +191,7 @@ def channel_info_json():
         enddate = None
         if queryChannel.end is not None:
             enddate = queryChannel.end.strftime('%Y-%m-%d')
-            
+
         result = {'chname': queryChannel.name, 'chcreatedate': queryChannel.creation_date.strftime('%Y-%m-%d'),'chdescription': queryChannel.description, 'chstart': startdate, 'chend': enddate, 'chlimit': queryChannel.member_limit, 'chprotected': protected}
         print(result)
         return jsonify(result)
@@ -222,7 +222,7 @@ def create_channel():
     while db.session.query(Channel.name).filter(Channel.name==generated_name).count() is not 0:
         word_count = randint(1,4)
         generated_name = petname.Generate(int(word_count))
-    
+
     channel = Channel(generated_name, creator, content)
     db.session.add(channel)
     db.session.commit()
@@ -268,8 +268,8 @@ def channel_entry(chname):
             if isMember is not None:
                 # FLASH user already member of channel
                 return render_template('channel.html', name=chname, alreadymember=True, membership=isMember, description=queryChannel.description)
-                
-            
+
+
             if queryChannel is None:
                 # FLASH channel not exists
                 return redirect(url_for('panel'))
@@ -290,7 +290,7 @@ def channel_entry(chname):
             passrequired = False
             if queryChannel.hashed is not None:
                 passrequired = True
-                        
+
             return render_template('channel.html', name=chname, passrequired=passrequired, description=queryChannel.description)
 
     if request.method == 'POST':
@@ -325,20 +325,20 @@ def channel_entry(chname):
                     print("select at least one")
                     # FLASH user should pick at least one
                     return redirect(url_for('channel_entry', chname=chname))
-                
+
                 if queryChannel.hashed is not None and passwordGet is None:
                     # FLASH password required
                     print("pass required")
                     return redirect(url_for('channel_entry', chname=chname))
                 currentDate = datetime.datetime.now().date()
                 if queryChannel.start is not None:
-                    
+
                     if queryChannel.start > currentDate or queryChannel.end < currentDate:
                         # FLASH channel deadline
                         print("deadline")
                         return redirect(url_for('panel'))
 
-                
+
                 if queryChannel.member_limit is not None:
                     member_count = db.session.query(Member).filter_by(channelName=queryChannel.name).count()
                     # member_count = Member.query(Member.memberName).filter_by(channelName=queryChannel.name).count()
@@ -385,7 +385,7 @@ def update_channel():
         channel.hashed = None
         channel.salt = None
 
-    
+
     if request.form.get('timecheck', False):
         channel.start = request.form.get('inputStartDate', None)
         channel.end = request.form.get('inputEndDate', None)
@@ -397,12 +397,12 @@ def update_channel():
         channel.member_limit = request.form.get('inputLimit', None)
     else:
         channel.member_limit = None
-            
+
 
     db.session.commit()
 
     return redirect(url_for('panel'))
-        
+
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
@@ -411,30 +411,30 @@ def profile():
 	user = User.query.filter_by(username=current_user.get_id()).first()
 	if not user:
 		return redirect(url_for('home'))
-        
+
 	if request.method == 'GET':
 		return render_template('profile.html', user=user)
-        
+
 @app.route('/profileu', methods=['POST'])
 @login_required
-def update_profile():   
+def update_profile():
 	user = User.query.filter_by(username=current_user.get_id()).first()
 	if not user:
 		return redirect(url_for('home'))
-	
+
 	user.name = request.form.get('inputName', user.name)
-	
+
 	userPassword = request.form.get('inputPassword', None)
-	
+
 	confirmPassword = request.form.get('inputConfirm', None)
-	
+
 	if userPassword == confirmPassword and userPassword != "":
 		user.setPassword(userPassword)
 	else:
 		print("no pass given or passwords don't match")
-		
-	db.session.commit() 
-	return redirect(url_for('login'))    
+
+	db.session.commit()
+	return redirect(url_for('login'))
 
 @app.route('/terms', methods=['GET'])
 def terms():
@@ -455,7 +455,7 @@ def emaildebug():
     mailaddress = request.form['inputEmail']
     if mailaddress == "":
         return redirect(url_for('panel'))
-    
+
     messageTo = "To: ".join(mailaddress)
 
     msg = "\r\n".join([
@@ -469,7 +469,7 @@ def emaildebug():
     server.sendmail("untitledchannelx@gmail.com", mailaddress, msg)
     server.close()
     # FINISH: Email send
-    
+
     return redirect(url_for('panel'))
 
 if __name__ == '__main__':
@@ -501,7 +501,7 @@ class User(db.Model):
         chars = []
         for i in range(16):
             chars.append(random.choice(ABECE))
-        
+
         real_salt = "".join(chars)
         return real_salt
 
@@ -513,13 +513,13 @@ class User(db.Model):
     def is_authenticated(self):
         return True
 
-    
+
     def is_active(self):
         if self.email_verified:
             print("True")
         else:
             print("False")
-            
+
         return self.email_verified
 
     def is_anonymous(self):
@@ -527,13 +527,13 @@ class User(db.Model):
 
     def get_id(self):
         return self.username
-    
+
     def setPassword(self, password):
         if password is not None:
             self.salt = self.createSalt()
             self.hashed = self.createHash(self.salt, password)
 
-class Channel(db.Model):    
+class Channel(db.Model):
     __tablename__ = 'channels'
     # TODO: Add setter and getter to other columns
     name = db.Column(db.Text, nullable = False, primary_key=True)
@@ -557,14 +557,14 @@ class Channel(db.Model):
         if password is not None:
             self.salt = self.createSalt()
             self.hashed = self.createHash(self.salt, password)
-        
+
 
     def createSalt(self):
         ABECE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         chars = []
         for i in range(16):
             chars.append(random.choice(ABECE))
-        
+
         real_salt = "".join(chars)
         return real_salt
 
@@ -602,7 +602,7 @@ class Member(db.Model):
     entryDate = db.Column(db.Date, nullable=False)
     prefersEmail = db.Column(db.Boolean, nullable=False)
     prefersPhone = db.Column(db.Boolean, nullable=False)
-    
+
 
     def __init__(self, channelName, memberName, entryDate, prefersEmail, prefersPhone):
         self.channelName = channelName
@@ -610,16 +610,3 @@ class Member(db.Model):
         self.entryDate = entryDate
         self.prefersEmail = prefersEmail
         self.prefersPhone = prefersPhone
-    
-        
-
-    
-
-
-    
-    
-    
-    
-        
-    
-
