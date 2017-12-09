@@ -71,6 +71,7 @@ def login():
                 flash("Wrong credentials or non-verified E-Mail address", "danger")
                 return redirect(url_for('login'))
         except AttributeError:
+            flash("Wrong credentials", "danger")
             return redirect(url_for('login'))
 
 
