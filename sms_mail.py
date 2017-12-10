@@ -24,7 +24,6 @@ while True:
             first_message = it
             break
    
-    #test code by bmg
     new_messages = list()
     #SMS okuma işi başlıyor
     if first_message["status"]=="received" and datetime.datetime.fromtimestamp(first_message["received_at"]) > (simdi+timedelta(minutes=-50)) :
