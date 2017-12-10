@@ -11,7 +11,7 @@ This project is created for the Software Engineering course of İstanbul Technic
 * 150140034 Kubilay Yazoğlu
 * 150140013 Murat Özkök
 
-# How to Test?
+# How to Install Locally?
 
 Make sure you have installed
 
@@ -79,3 +79,13 @@ Linux and Max OS systems are examples of Unix-like systems. Open terminal inside
 
     export FLASK_APP=app.py
     flask run
+    
+ # How to Test?
+ 
+tests/ directory contains functional and load tests. For futher information look inside this directory.
+
+## Unit tests
+
+Unit tests implementes with Python 3's unittest library, there are 23 tests in total. You can use following command to start testing
+
+    $ python3 channelx_unittest.py
