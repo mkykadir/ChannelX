@@ -37,35 +37,35 @@ Make sure you have added required environmental variables to your system for loc
 * Variable required for SQL server:
     Name: CHANNELX_SQL_SERVER
 	Variable: postgresql://adminusername:adminpassword@localhost/channelx
-	
+
 * Variable required for mail redirecting;
 	Name: GAW_APPLICATION_NAME
-	Variable: e-mail-okuma 
-	
+	Variable: e-mail-okuma
+
 * Variable required for mail redirecting;
 	Name: GAW_CLIENT_SECRET_FILE_PATH
 	Variable: C:\Users\Root\Desktop\channelx\client_secret.json(write your path)
-	
+
 * Variable required for mail redirecting;
 	Name: GAW_DISABLE_SSL_CERTS
 	Variable: True
-	
+
 * Variable required for mail redirecting;
 	Name: GAW_SCOPES
 	Variable: https://mail.google.com/
-	
+
 * Variable required for mail redirecting;
 	Name: GAW_USER_ID
 	Variable: untitledchannelx@gmail.com
-	
+
 Before running project, this needs to be executed if models.py is changed, i.e. new tables added
 
 * Open terminal or command prompt inside project folder
-* Open Python program by wiritng 'python'
+* Open Python program by writing 'python'
 
     from app import db
     db.create_all()
-    
+
 ## Windows Systems
 
 Open project folder in command prompt
@@ -79,13 +79,13 @@ Linux and Max OS systems are examples of Unix-like systems. Open terminal inside
 
     export FLASK_APP=app.py
     flask run
-    
+
  # How to Test?
- 
-tests/ directory contains functional and load tests. For futher information look inside this directory.
+
+tests/ directory contains functional and load tests. For further information look inside this directory.
 
 ## Unit tests
 
-Unit tests implementes with Python 3's unittest library, there are 23 tests in total. You can use following command to start testing
+Unit tests are implemented with Python 3's unittest library, there are 23 tests in total. You can use following command to start testing
 
     $ python3 channelx_unittest.py
