@@ -78,7 +78,7 @@ while True:
         
     if new_message > 0 and x['base64_msg_body'] != []:
         str1 = str(base64.urlsafe_b64decode(x['base64_msg_body']).decode('utf-8'))
-        result = re.search('<(.*)>', x['from'])
+        #result = re.search('<(.*)>', x['from'])
         #from kısmındaki gereksiz veriden kurtulup sadece mail kısmını elde ettik
         r = Member.query.filter_by(channelName=x['subject']).all()
         #r = channelName'ı x['subject'] olan memberların hepsi
@@ -86,7 +86,7 @@ while True:
             s = User.query.filter_by(username=t.memberName).all()
             #s = username'i t.memberName olan satırların hepsi. her bir username için dönüyor.
             for z in s:
-                if(z.email == result.group(1)):
+                if(z.email == x['from']):
                     str1 = z.username + ': #Message: ' + str1     #Mesajın gönderenin emailinden username'ini bulup body'nin başına ekliyorum.
                     continue                            #Mesaj gönderen, mesajın iletileceği kişiler arasında yer almasın diye bunu es geçiyorum
                 
