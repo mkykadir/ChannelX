@@ -1,5 +1,5 @@
 # ChannelX
-This project is created for the Software Engineering course of İstanbul Technical University. More details will be added.
+This project is created for the Software Engineering course of Istanbul Technical University. More details will be added.
 
 # Project Members
 
