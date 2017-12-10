@@ -186,6 +186,58 @@ class ChannelxChannelInformationTestCase(unittest.TestCase):
         rv = self.app.get('/_channeli?chname=no-channel', follow_redirects=True)
         self.assertIn(b'Panel', rv.data)
 
+class ChannelxChannelUpdateTestCase(unittest.TestCase):
+    def setUp(self):
+        self.db = app.db
+        app.app.testing = True
+        self.app = app.app.test_client()
+        self.db.session.close()
+        self.db.drop_all()
+        self.db.create_all()
+        self.app.post('/signup', data=dict(
+            username='testuser2',
+            name='Test User2',
+            email='testuser2@mail.com',
+            phone='5554443322',
+            password='1234',
+            confirm='1234',
+            accept_terms='y'
+        ), follow_redirects=True)
+        self.app.get('/verify?username=testuser2', follow_redirects=True)
+        self.app.post('/signup', data=dict(
+            username='testuser3',
+            name='Test User3',
+            email='testuser3@mail.com',
+            phone='5554443311',
+            password='1234',
+            confirm='1234',
+            accept_terms='y'
+        ), follow_redirects=True)
+        self.app.get('/verify?username=testuser3', follow_redirects=True)
+        channel = app.Channel('test-channel', 'testuser2', 'deneme')
+        self.db.session.add(channel)
+        self.db.session.commit()
+
+    def test_update_existing_channel_owner(self):
+        self.app.post('/login', data=dict(inputUsername='testuser2',
+                            inputPassword='1234'), follow_redirects=True)
+        rv = self.app.post('/channelu', data=dict(
+            channelName='test-channel',
+            descriptioncheck='y',
+            inputDescription='deneme2'
+        ), follow_redirects=True)
+        self.assertIn(b'Panel', rv.data)
+
+    def test_update_existing_channel_nonowner(self):
+        self.app.post('/login', data=dict(inputUsername='testuser3',
+                            inputPassword='1234'), follow_redirects=True)
+        rv = self.app.post('/channelu', data=dict(
+            channelName='test-channel',
+            descriptioncheck='y',
+            inputDescription='deneme2'
+        ), follow_redirects=True)
+        self.assertIn(b'Panel', rv.data)
+
 class ChannelxChannelDeleteTestCase(unittest.TestCase):
     def setUp(self):
         self.db = app.db

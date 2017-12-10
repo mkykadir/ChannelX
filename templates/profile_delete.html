@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://getbootstrap.com/docs/4.0/examples/signin/ -->
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>Profile | ChannelX</title>
+
+		<!-- Bootstrap core CSS -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+
+		<!-- Custom styles for this template -->
+
+	</head>
+
+  <body>
+	<div class="container py-3">
+		<div class="row">
+			<div class="mx-auto col-lg">
+						<!-- form user info -->
+						<div class="card">
+							<div class="card-header">
+								<h4 class="mb-0">Are you sure to leave ChannelX, {{ current_user.get_id() }}?</h4>
+							</div>
+							<div class="card-body">
+								<form class="form" name="deleteform" method="post" action="{{ url_for('delete_profile') }}">
+									<div class="form-group row">
+										<p>
+                      All of your membershipment and channel information with your profile information will be deleted.
+                      This operation will delete all of your information permenantly on ChannelX.
+                    </p>
+									</div>
+									<div class="form-group row">
+										<div class="col-lg-9">
+											<button class="btn btn-danger" type="submit">Yes</button>
+											<a href="{{ url_for('panel') }}" class="btn btn-success">No</a>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<!-- /form user info -->
+			</div>
+		</div>
+	</div>
+
+</body></html>

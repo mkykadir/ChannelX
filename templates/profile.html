@@ -11,7 +11,7 @@
 		<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
 
 		<!-- Custom styles for this template -->
-		
+
 	</head>
 
   <body>
@@ -64,7 +64,8 @@
 									<div class="form-group row">
 										<div class="col-lg-9">
 											<button class="btn btn-success" type="submit">Save</button>
-											<a href="{{ url_for('panel') }}" class="btn btn-danger">Cancel</a>
+											<a href="{{ url_for('panel') }}" class="btn btn-default">Cancel</a>
+											<a href="{{ url_for('delete_profile') }}" class="btn btn-danger">Delete Profile</a>
 										</div>
 									</div>
 								</form>
@@ -73,6 +74,6 @@
 						<!-- /form user info -->
 			</div>
 		</div>
-	</div> 
+	</div>
 
 </body></html>

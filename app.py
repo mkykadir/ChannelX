@@ -432,6 +432,21 @@ def update_profile():
 	db.session.commit()
 	return redirect(url_for('login'))
 
+@app.route('/profiled', methods=['GET', 'POST'])
+@login_required
+def delete_profile():
+    if request.method == 'GET':
+        return render_template('profile_delete.html')
+
+    if request.method == 'POST':
+        user = User.query.filter_by(username=current_user.get_id()).first()
+        db.session.delete(user)
+        db.session.commit()
+        logout_user()
+        return redirect(url_for('home'))
+
+    return redirect(url_for('profile'))
+
 @app.route('/terms', methods=['GET'])
 def terms():
     return render_template('terms.html')
@@ -471,7 +486,6 @@ def emaildebug():
 if __name__ == '__main__':
     port, debug = 5000, True
     app.run(host='0.0.0.0', port=port, debug=debug)
-
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -538,6 +552,10 @@ class Channel(db.Model):
     salt = db.Column(db.Text, nullable=True)
     # password = db.Column(db.Text, nullable = True)
 
+    cuser = db.relationship('User',
+                                backref=db.backref('usersbc', cascade="all, delete-orphan"),
+                                lazy='joined')
+
     def __init__(self, name, creator, description):
         self.name = name
         self.creator = creator
@@ -563,7 +581,6 @@ class Channel(db.Model):
         salted_password = password.join(salt)
         h = hashlib.md5(salted_password.encode())
         return h.hexdigest()
-
 
 class Message(db.Model):
     __tablename__ = 'messages'
@@ -593,6 +610,13 @@ class Member(db.Model):
     entryDate = db.Column(db.Date, nullable=False)
     prefersEmail = db.Column(db.Boolean, nullable=False)
     prefersPhone = db.Column(db.Boolean, nullable=False)
+
+    channel = db.relationship('Channel',
+                                backref=db.backref('channelsb', cascade="all, delete-orphan"),
+                                lazy='joined')
+    member = db.relationship('User',
+                                backref=db.backref('usersb', cascade="all, delete-orphan"),
+                                lazy='joined')
 
 
     def __init__(self, channelName, memberName, entryDate, prefersEmail, prefersPhone):
