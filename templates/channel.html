@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
 
 		<!-- Custom styles for this template -->
-		
+
 	</head>
 
   <body>
@@ -37,13 +37,13 @@
 								{% if messages %}
 								{% for category, message in messages %}
 									<div class="alert alert-{{ category }}">
-									  <span class="closebtn" style="cursor: pointer;" onclick="this.parentElement.style.display='none';">&times;</span> 
+									  <span class="closebtn" style="cursor: pointer;" onclick="this.parentElement.style.display='none';">&times;</span>
 									  {{ message }}
-									</div>								
-								{% endfor %}								
+									</div>
+								{% endfor %}
 								{% endif %}
 								{% endwith %}
-								
+
 								{% if members %}
 								<table class="table">
 									<thead>
@@ -58,7 +58,7 @@
 													{{ member.memberName }}
 												</td>
 												<td>
-													{{ member.entrDate }}
+													{{ member.entryDate.strftime('%Y-%m-%d') }}
 												</td>
 												<td>
 													<a href="{{ url_for('kick_user', chname=name, memname=member.memberName) }}" class="btn btn-danger"><i class="fa fa-ban" aria-hidden="true"></i> Kick</a>
@@ -76,7 +76,7 @@
 											<label><input name="inputPreferEmail" type="checkbox" id="inputPreferEmail" class="form-control" {% if membership.prefersEmail %} checked {% endif %}> Get messages via E-Mail</label>
 										</div>
 									</div>
-									
+
 									<div class="form-group row">
 										<div class="col-lg-9">
 											<label><input name="inputPreferSms" type="checkbox" id="inputPreferSms" class="form-control" {% if membership.prefersPhone %} checked {% endif %}> Get messages via SMS</label>
@@ -104,7 +104,7 @@
 											<label><input name="inputPreferEmail" type="checkbox" id="inputPreferEmail" class="form-control"> Get messages via E-Mail</label>
 										</div>
 									</div>
-									
+
 									<div class="form-group row">
 										<div class="col-lg-9">
 											<label><input name="inputPreferSms" type="checkbox" id="inputPreferSms" class="form-control"> Get messages via SMS</label>
@@ -124,7 +124,7 @@
 											<label><input name="inputPreferEmail" type="checkbox" id="inputPreferEmail" class="form-control"> Get messages via E-Mail</label>
 										</div>
 									</div>
-									
+
 									<div class="form-group row">
 										<div class="col-lg-9">
 											<label><input name="inputPreferSms" type="checkbox" id="inputPreferSms" class="form-control"> Get messages via SMS</label>
@@ -144,6 +144,6 @@
 						<!-- /form user info -->
 			</div>
 		</div>
-	</div> 
+	</div>
 
 </body></html>
