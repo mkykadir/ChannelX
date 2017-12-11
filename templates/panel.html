@@ -30,9 +30,9 @@
 					<div class="form-group row">
 						<label class="col-lg-3 col-form-label form-control-label">Description</label>
 						<div class="col-lg-9">
-							
+
 							<textarea name="inputCreateDescription" id="inputCreateDescription" class="form-control" placeholder="Enter descript for your channel" required="" form="channelcreateform" rows="7" maxlength="200"></textarea>
-							
+
 						</div>
 					</div>
 					<div class="form-group row">
@@ -61,7 +61,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div id="wrapper">
 
 			<!-- Sidebar -->
@@ -121,7 +121,7 @@
 					<div id="channel-info-container">
 						<!-- channel info form -->
 						<p id="channel-create-date">Please select a channel from menu</p>
-						
+
 						<form id="channel-info-form" name="channel-info-form" class="form" style="display: none;" method="post" action="{{ url_for('update_channel') }}">
 							<input type="text" id="channelName" name="channelName" style="display: none;">
 							<div class="form-group row">
@@ -178,8 +178,8 @@
 								<a onClick="manage_members()" style="margin-left: 3px; color: white; cursor: pointer;" class="btn btn-warning" id="manageMembers">Manage Members</a>
 							</div>
 						</form>
-						
-					</div>					
+
+					</div>
 				</div>
 			</div>
 			<!-- /#page-content-wrapper -->
@@ -190,7 +190,7 @@
 		<!-- Bootstrap core JavaScript -->
 		<script src="{{ url_for('static', filename='js/jquery-3.1.1.min.js') }}"></script>
 		<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-		
+
 		<script>
 			$("input[id='descriptioncheck']").change(function(){
 				if(this.checked){
@@ -232,7 +232,7 @@
 			  console.log($(this).val());
 			});
 		</script>
-		
+
 		<script>
 			function saveChanges(){
 				var data = new Object();
@@ -249,7 +249,7 @@
 				if(document.getElementById("limitcheck").checked){
 					data.chlimit = $("#inputLimit").val();
 				}
-				
+
 				console.log(data);
 			}
 		</script>
@@ -258,9 +258,9 @@
 		$("#menu-toggle").click(function(e) {
 			e.preventDefault();
 			$("#wrapper").toggleClass("toggled");
-		});	
+		});
 		</script>
-		
+
 		<script>
 			// Get the modal
 			var modalAdd = document.getElementById('addChannel');
@@ -271,7 +271,7 @@
 			// Get the <span> element that closes the modal
 			var span = document.getElementsByClassName("close")[0];
 
-			// When the user clicks on the button, open the modal 
+			// When the user clicks on the button, open the modal
 			btn.onclick = function() {
 				$("#wrapper").toggleClass("toggled");
 				modalAdd.style.display = "block";
@@ -289,7 +289,7 @@
 				}
 			}
 		</script>
-		
+
 		<script>
 			// Get the modal
 			var modal = document.getElementById('removeChannel');
@@ -301,7 +301,7 @@
 			var span = document.getElementsByClassName("close")[0];
 			var no = document.getElementById("channel-delete-no");
 
-			// When the user clicks on the button, open the modal 
+			// When the user clicks on the button, open the modal
 			btn.onclick = function() {
 				$("#wrapper").toggleClass("toggled");
 				modal.style.display = "block";
@@ -311,7 +311,7 @@
 			span.onclick = function() {
 				modal.style.display = "none";
 			}
-			
+
 			no.onclick = function() {
 				modal.style.display = "none";
 			}
@@ -323,11 +323,11 @@
 				}
 			}
 		</script>
-	
+
 		<script>
 			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 		</script>
-		
+
 		<script>
 			function remove_channel(){
 				var channel_name = $("input[id='channelName']").val();
@@ -340,14 +340,14 @@
 				});
 			}
 		</script>
-		
+
 		<script>
 			function manage_members(){
 				var channel_name = $("input[id='channelName']").val();
 				window.location.href = $SCRIPT_ROOT + '/channel/' + channel_name;
 			}
 		</script>
-		
+
 		<script>
 			function get_channel_info(channel_name){
 				document.getElementById('channel-info-form').style.display = 'block';
@@ -366,13 +366,13 @@
 					if(data.chprotected){
 						$("input[id='passwordcheck']").prop('checked', true);
 						$("input[id='inputPassword']").attr("disabled", false);
-						$("input[id='inputPassword']").attr("placeholder", "Change password");						
+						$("input[id='inputPassword']").attr("placeholder", "Change password");
 					}
 					if(data.chstart){
 						$("input[id='timecheck']").prop('checked', true);
 						$("input[id='inputStartDate']").attr("disabled", false);
 						$("input[id='inputEndDate']").attr("disabled", false);
-						
+
 					}
 					if(data.chlimit){
 						$("input[id='limitcheck']").prop('checked', true);

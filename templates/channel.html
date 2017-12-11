@@ -5,7 +5,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<title>Signin | ChannelX</title>
+		<title>Manage Channel | ChannelX</title>
 
 		<!-- Bootstrap core CSS -->
 		<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
@@ -52,7 +52,7 @@
 										<th>Operations</th>
 									</thead>
 									<tbody>
-										{% for member in members %}
+										{% for member in members if member.memberName != current_user.get_id() %}
 											<tr>
 												<td>
 													{{ member.memberName }}

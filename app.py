@@ -222,7 +222,9 @@ def create_channel():
         generated_name = petname.Generate(int(word_count))
 
     channel = Channel(generated_name, creator, content)
+    member = Member(generated_name, creator, datetime.datetime.now().date(), True, False)
     db.session.add(channel)
+    db.session.add(member)
     db.session.commit()
     return redirect(url_for('home'))
 
