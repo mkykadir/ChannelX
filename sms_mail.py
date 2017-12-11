@@ -66,47 +66,46 @@ while True:
 
     #Email-okuma işi başlıyor     
     dicts = gmail_api.check_new_mail()
-    new_message = 0
     result=""
     str2=''
     emails = list()
     numbers=list()#for sms sending phase
 
     for x in dicts:
-        new_message = new_message +1
         
-    if new_message > 0 and x['base64_msg_body'] != []:
-        str1 = str(base64.urlsafe_b64decode(x['base64_msg_body']).decode('utf-8'))
-        #result = re.search('<(.*)>', x['from'])
-        #from kısmındaki gereksiz veriden kurtulup sadece mail kısmını elde ettik
-        r = Member.query.filter_by(channelName=x['subject']).all()
-        #r = channelName'ı x['subject'] olan memberların hepsi
-        for t in r:
-            s = User.query.filter_by(username=t.memberName).all()
-            #s = username'i t.memberName olan satırların hepsi. her bir username için dönüyor.
-            for z in s:
-                if(z.email == x['from']):
-                    str1 = z.username + ': #Message: ' + str1     #Mesajın gönderenin emailinden username'ini bulup body'nin başına ekliyorum.
-                    continue                            #Mesaj gönderen, mesajın iletileceği kişiler arasında yer almasın diye bunu es geçiyorum
-                
-                if t.prefersEmail:
-                    str2 = z.email + ',' + str2 + ','
-                    str2 = str2[:-1]
-                if t.prefersPhone:
-                    numbers.append(z.phone)
-                index = str1.find(":") + 1
-                str5 = str1[:index] + x['subject'] + ":" + str1[index:]
-               
-        for number in numbers:
-            sms_handler.sendMessageToNumber(number,str5,device_id)          
-        
-        str2 = str2[:-1] #Bcc listesinin en sonundaki fazlalık virgülü sildim.
-        #print("SMS olarak gönderilen mesaj body'si: " + str5)
-        #print("Email olarak gönderilen mesaj body'si: " + str1)
-        #print("Email konusu:  " + x['subject'])
-        #print("Email bcc'si:  " + str2)
-        api.compose_mail(subject=x['subject'], body=str1, to='goldennnnn01@hotmail.com', cc='', bcc=str2)
-                
-    else:
-        print("There is no new message sent to channel!")
+        if x['base64_msg_body'] != []:
+            str1 = str(base64.urlsafe_b64decode(x['base64_msg_body']).decode('utf-8'))
+            #result = re.search('<(.*)>', x['from'])
+            #from kısmındaki gereksiz veriden kurtulup sadece mail kısmını elde ettik
+            r = Member.query.filter_by(channelName=x['subject']).all()
+            #r = channelName'ı x['subject'] olan memberların hepsi
+            for t in r:
+                s = User.query.filter_by(username=t.memberName).all()
+                #s = username'i t.memberName olan satırların hepsi. her bir username için dönüyor.
+                for z in s:
+                    if(z.email == x['from']):
+                        str1 = z.username + ': #Message: ' + str1     #Mesajın gönderenin emailinden username'ini bulup body'nin başına ekliyorum.
+                        print("scasfas")
+                        continue                            #Mesaj gönderen, mesajın iletileceği kişiler arasında yer almasın diye bunu es geçiyorum
+                    
+                    if t.prefersEmail:
+                        str2 = z.email + ',' + str2 + ','
+                        str2 = str2[:-1]
+                    if t.prefersPhone:
+                        numbers.append(z.phone)
+                    index = str1.find(":") + 1
+                    str5 = str1[:index] + x['subject'] + ":" + str1[index:]
+                   
+            for number in numbers:
+                sms_handler.sendMessageToNumber(number,str5,device_id)          
+            
+            str2 = str2[:-1] #Bcc listesinin en sonundaki fazlalık virgülü sildim.
+            #print("SMS olarak gönderilen mesaj body'si: " + str5)
+            #print("Email olarak gönderilen mesaj body'si: " + str1)
+            #print("Email konusu:  " + x['subject'])
+            #print("Email bcc'si:  " + str2)
+            api.compose_mail(subject=x['subject'], body=str1, to='goldennnnn01@hotmail.com', cc='', bcc=str2)
+                    
+        else:
+            print("There is no new message sent to channel!")
     time.sleep(60)
