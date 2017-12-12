@@ -68,6 +68,8 @@ Before running project, this needs to be executed if models.py is changed, i.e. 
 
 ## Windows Systems
 
+https://www.youtube.com/watch?v=XC_esREQyzQ
+
 Open project folder in command prompt
 
     set FLASK_APP=app.py
