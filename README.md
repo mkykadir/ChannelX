@@ -1,9 +1,6 @@
 # ChannelX
-This project is created for the Software Engineering course of Istanbul Technical University. More details will be added.
-
+This project is created for the Software Engineering course of Istanbul Technical University.
 # Project Members
-
-(Please commit yourself into this file)
 
 * 150140119 Muhammed Kadir Yücel
 * 040140003 Burak Mert Gonultas
@@ -67,6 +64,8 @@ Before running project, this needs to be executed if models.py is changed, i.e. 
     db.create_all()
 
 ## Windows Systems
+
+https://www.youtube.com/watch?v=XC_esREQyzQ
 
 Open project folder in command prompt
 
