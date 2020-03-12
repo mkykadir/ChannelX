@@ -59,7 +59,7 @@ mccabe==0.6.1
 passlib==1.7.1
 pew==1.1.0
 pipenv==8.3.1
-psutil==5.3.1
+psutil==5.6.6
 psycopg2==2.7.3.1
 pycodestyle==2.3.1
 pycparser==2.18
@@ -107,7 +107,7 @@ passlib==1.7.1
 petname==2.2
 pew==1.1.0
 pipenv==8.3.1
-psutil==5.3.1
+psutil==5.6.6
 psycopg2==2.7.3.1
 pycodestyle==2.3.1
 pycparser==2.18
@@ -159,7 +159,7 @@ passlib==1.7.1
 petname==2.2
 pew==1.1.0
 pipenv==8.3.1
-psutil==5.3.1
+psutil==5.6.6
 psycopg2==2.7.3.1
 pycodestyle==2.3.1
 pycparser==2.18
